@@ -14,10 +14,6 @@ const route = useRoute()
 
     <!-- Menu -->
     <q-list padding>
-<<<<<<< HEAD
-
-      <q-item clickable to="/recommend" exact :active="route.path === '/recommend'" active-class="menu-active">
-=======
       <q-item
         clickable
         to="/recommend"
@@ -25,7 +21,6 @@ const route = useRoute()
         :active="route.path === '/recommend'"
         active-class="menu-active"
       >
->>>>>>> ab889a42dda1ce400361617cc75b7608d5bf01af
         <q-item-section avatar>
           <q-icon name="auto_awesome" />
         </q-item-section>
@@ -39,13 +34,7 @@ const route = useRoute()
           <q-icon name="calculate" />
         </q-item-section>
 
-<<<<<<< HEAD
-        <q-item-section>
-          保費試算
-        </q-item-section>
-=======
         <q-item-section> 保費試算 </q-item-section>
->>>>>>> ab889a42dda1ce400361617cc75b7608d5bf01af
       </q-item>
 
       <q-item clickable to="/plan-admin" exact :active="route.path === '/plan-admin'" active-class="menu-active">
