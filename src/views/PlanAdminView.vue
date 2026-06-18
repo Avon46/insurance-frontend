@@ -1,134 +1,292 @@
+<script setup lang="ts">
+import { computed, onMounted, ref } from 'vue'
+import axios from 'axios'
+import { useQuasar, type QTableColumn } from 'quasar'
+import PlanFormDialog from '@/components/admin/PlanFormDialog.vue'
+import DeletePlanDialog from '@/components/admin/DeletePlanDialog.vue'
+import { createPlan, deletePlan, fetchPlans, updatePlan } from '@/services/planService'
+import {
+  CATEGORY_LABELS,
+  STATUS_LABELS,
+  type ApiErrorResponse,
+  type InsurancePlan,
+  type PlanCategory,
+  type PlanFormMode,
+  type PlanRequest,
+} from '@/types/plan'
+
+const $q = useQuasar()
+
+// ── 列表狀態 ────────────────────────────────────────────
+const plans = ref<InsurancePlan[]>([])
+const loading = ref(false)
+
+// 分類篩選（對應 GET /plans?category=）
+const categoryFilter = ref<PlanCategory | null>(null)
+const categoryFilterOptions = [
+  { value: null, label: '全部分類' },
+  ...(Object.keys(CATEGORY_LABELS) as PlanCategory[]).map((value) => ({
+    value,
+    label: CATEGORY_LABELS[value],
+  })),
+]
+
+// ── 表單視窗狀態 ────────────────────────────────────────
+const formOpen = ref(false)
+const formMode = ref<PlanFormMode>('create')
+const editingPlan = ref<InsurancePlan | null>(null)
+const submitting = ref(false)
+
+// ── 刪除視窗狀態 ────────────────────────────────────────
+const deleteOpen = ref(false)
+const deletingPlan = ref<InsurancePlan | null>(null)
+const deleting = ref(false)
+
+const columns: QTableColumn<InsurancePlan>[] = [
+  { name: 'id', label: 'ID', field: 'id', align: 'left', sortable: true },
+  { name: 'name', label: '保單名稱', field: 'name', align: 'left', sortable: true },
+  {
+    name: 'category',
+    label: '分類',
+    field: 'category',
+    align: 'left',
+    sortable: true,
+    format: (v: PlanCategory) => CATEGORY_LABELS[v] ?? v,
+  },
+  {
+    name: 'basePremium',
+    label: '基本保費',
+    field: 'basePremium',
+    align: 'right',
+    sortable: true,
+    format: (v: number) => v?.toLocaleString('zh-TW'),
+  },
+  {
+    name: 'maxCoverage',
+    label: '最高保障額度',
+    field: 'maxCoverage',
+    align: 'right',
+    sortable: true,
+    format: (v: number) => v?.toLocaleString('zh-TW'),
+  },
+  { name: 'status', label: '狀態', field: 'status', align: 'center', sortable: true },
+  { name: 'actions', label: '操作', field: 'id', align: 'center' },
+]
+
+const planCount = computed(() => plans.value.length)
+
+function notifyError(err: unknown, fallback: string) {
+  let message = fallback
+  if (axios.isAxiosError<ApiErrorResponse>(err)) {
+    message = err.response?.data?.message ?? err.message ?? fallback
+  }
+  $q.notify({ type: 'negative', message, position: 'top' })
+}
+
+async function loadPlans() {
+  loading.value = true
+  try {
+    plans.value = await fetchPlans(categoryFilter.value ?? undefined)
+  } catch (err) {
+    notifyError(err, '載入保單列表失敗')
+  } finally {
+    loading.value = false
+  }
+}
+
+// ── 新增 / 修改 ─────────────────────────────────────────
+function openCreate() {
+  formMode.value = 'create'
+  editingPlan.value = null
+  formOpen.value = true
+}
+
+function openEdit(plan: InsurancePlan) {
+  formMode.value = 'edit'
+  editingPlan.value = plan
+  formOpen.value = true
+}
+
+// 父元件依 mode 決定要呼叫的指令：create → POST、edit → PUT
+async function handleSubmit(payload: PlanRequest) {
+  submitting.value = true
+  try {
+    if (formMode.value === 'create') {
+      await createPlan(payload)
+      $q.notify({ type: 'positive', message: '保單已新增', position: 'top' })
+    } else if (editingPlan.value) {
+      await updatePlan(editingPlan.value.id, payload)
+      $q.notify({ type: 'positive', message: '保單已更新', position: 'top' })
+    }
+    formOpen.value = false
+    await loadPlans()
+  } catch (err) {
+    notifyError(err, formMode.value === 'create' ? '新增保單失敗' : '更新保單失敗')
+  } finally {
+    submitting.value = false
+  }
+}
+
+// ── 刪除 ────────────────────────────────────────────────
+function openDelete(plan: InsurancePlan) {
+  deletingPlan.value = plan
+  deleteOpen.value = true
+}
+
+async function handleDelete(id: number) {
+  deleting.value = true
+  try {
+    await deletePlan(id)
+    $q.notify({ type: 'positive', message: '保單已刪除', position: 'top' })
+    deleteOpen.value = false
+    await loadPlans()
+  } catch (err) {
+    notifyError(err, '刪除保單失敗')
+  } finally {
+    deleting.value = false
+  }
+}
+
+onMounted(loadPlans)
+</script>
+
 <template>
-  <q-page class="placeholder-page">
-    <div class="placeholder-card">
-      <div class="placeholder-card__icon">
-        <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
-          <rect x="6" y="8" width="36" height="32" rx="4" stroke="currentColor" stroke-width="2.2" />
-          <path d="M6 18h36" stroke="currentColor" stroke-width="2.2" />
-          <path d="M16 8v10M32 8v10" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" />
-          <path d="M14 27h8M14 33h5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" />
-          <path d="M30 26l3 3 5-5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
-        </svg>
+  <q-page class="plan-admin">
+    <div class="plan-admin__header">
+      <div>
+        <h1 class="plan-admin__title">保險方案管理</h1>
+        <p class="plan-admin__subtitle">共 {{ planCount }} 筆保單 · 新增、修改、刪除與分類篩選</p>
       </div>
-      <h1 class="placeholder-card__title">保險方案管理</h1>
-      <p class="placeholder-card__desc">
-        此模組由 <strong>劉昕雨</strong> 負責開發，功能包含保單 CRUD 管理、QTable 列表與分類篩選。
-      </p>
-      <div class="placeholder-card__specs">
-        <div class="spec-item">
-          <span class="spec-item__label">API</span>
-          <code>GET / POST / PUT / DELETE /api/v1/plans</code>
-        </div>
-        <div class="spec-item">
-          <span class="spec-item__label">功能</span>
-          <span>新增、編輯、刪除保單；依分類即時篩選</span>
-        </div>
-        <div class="spec-item">
-          <span class="spec-item__label">UI 元件</span>
-          <span>QTable、二次確認刪除彈窗</span>
-        </div>
-      </div>
-      <span class="placeholder-card__badge">開發中</span>
+      <q-btn
+        color="primary"
+        icon="add"
+        label="新增保單"
+        no-caps
+        unelevated
+        @click="openCreate"
+      />
     </div>
+
+    <q-card flat bordered class="plan-admin__card">
+      <q-card-section class="plan-admin__toolbar">
+        <q-select
+          v-model="categoryFilter"
+          :options="categoryFilterOptions"
+          label="分類篩選"
+          outlined
+          dense
+          emit-value
+          map-options
+          style="min-width: 200px"
+          @update:model-value="loadPlans"
+        />
+        <q-space />
+        <q-btn flat dense round icon="refresh" color="primary" @click="loadPlans">
+          <q-tooltip>重新整理</q-tooltip>
+        </q-btn>
+      </q-card-section>
+
+      <q-table
+        :rows="plans"
+        :columns="columns"
+        row-key="id"
+        :loading="loading"
+        flat
+        :rows-per-page-options="[10, 20, 50, 0]"
+        no-data-label="目前沒有保單資料"
+      >
+        <template #body-cell-status="cellProps">
+          <q-td :props="cellProps" class="text-center">
+            <q-badge
+              :color="cellProps.value === 'ACTIVE' ? 'green-6' : 'grey-5'"
+              :label="STATUS_LABELS[cellProps.value as keyof typeof STATUS_LABELS] ?? cellProps.value"
+            />
+          </q-td>
+        </template>
+
+        <template #body-cell-actions="cellProps">
+          <q-td :props="cellProps" class="text-center">
+            <q-btn
+              flat
+              dense
+              round
+              icon="edit"
+              color="primary"
+              size="sm"
+              @click="openEdit(cellProps.row)"
+            >
+              <q-tooltip>修改</q-tooltip>
+            </q-btn>
+            <q-btn
+              flat
+              dense
+              round
+              icon="delete"
+              color="negative"
+              size="sm"
+              @click="openDelete(cellProps.row)"
+            >
+              <q-tooltip>刪除</q-tooltip>
+            </q-btn>
+          </q-td>
+        </template>
+      </q-table>
+    </q-card>
+
+    <!-- 新增 / 修改 共用視窗：由 mode 決定送出 POST 或 PUT -->
+    <PlanFormDialog
+      v-model="formOpen"
+      :mode="formMode"
+      :plan="editingPlan"
+      :loading="submitting"
+      @submit="handleSubmit"
+    />
+
+    <!-- 刪除防呆視窗：輸入完整 ID + 5 秒倒數 -->
+    <DeletePlanDialog
+      v-model="deleteOpen"
+      :plan="deletingPlan"
+      :loading="deleting"
+      @confirm="handleDelete"
+    />
   </q-page>
 </template>
 
 <style scoped>
-.placeholder-page {
-  min-height: inherit;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 40px 24px;
+.plan-admin {
+  padding: 28px 32px;
 }
 
-.placeholder-card {
-  background: var(--white);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-card);
-  padding: 48px 40px;
-  max-width: 520px;
-  width: 100%;
-  text-align: center;
+.plan-admin__header {
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  align-items: flex-end;
+  justify-content: space-between;
   gap: 16px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
 }
 
-.placeholder-card__icon {
-  width: 64px;
-  height: 64px;
-  border-radius: 18px;
-  background: var(--light-green);
-  color: var(--primary-color);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.placeholder-card__icon svg {
-  width: 36px;
-  height: 36px;
-}
-
-.placeholder-card__title {
+.plan-admin__title {
   margin: 0;
   font-size: 22px;
   font-weight: 800;
-  color: var(--dark-green);
+  color: var(--dark-green, #007a3d);
 }
 
-.placeholder-card__desc {
-  margin: 0;
-  font-size: 14.5px;
-  color: var(--text-muted);
-  line-height: 1.7;
-  max-width: 380px;
+.plan-admin__subtitle {
+  margin: 4px 0 0;
+  font-size: 13.5px;
+  color: var(--text-muted, #888);
 }
 
-.placeholder-card__specs {
-  width: 100%;
-  background: var(--light-green);
-  border-radius: var(--radius-md);
-  padding: 16px 20px;
+.plan-admin__card {
+  border-radius: var(--radius-lg, 16px);
+  overflow: hidden;
+}
+
+.plan-admin__toolbar {
   display: flex;
-  flex-direction: column;
-  gap: 10px;
-  text-align: left;
-  margin-top: 4px;
-}
-
-.spec-item {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.spec-item__label {
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--primary-color);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-.spec-item code,
-.spec-item span:not(.spec-item__label) {
-  font-size: 13px;
-  color: var(--text-main);
-  line-height: 1.5;
-}
-
-.placeholder-card__badge {
-  display: inline-flex;
   align-items: center;
-  background: #fff3cd;
-  color: #7d5f00;
-  font-size: 12px;
-  font-weight: 700;
-  padding: 4px 14px;
-  border-radius: 999px;
-  letter-spacing: 0.04em;
+  gap: 12px;
 }
 </style>
