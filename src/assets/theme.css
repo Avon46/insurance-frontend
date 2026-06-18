@@ -1,0 +1,58 @@
+:root {
+  /* 品牌色彩（依規格表定義） */
+  --primary-color: #05994d;
+  --dark-green: #007a3d;
+  --light-green: #e8f5ee;
+  --white: #ffffff;
+  --text-main: #333333;
+  --border-grey: #e5e5e5;
+
+  /* 延伸語意色，規格表未定義但 UI 必須的狀態色 */
+  --error-color: #c0392b;
+  --error-bg: #fdecea;
+  --text-muted: #767676;
+
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
+  --shadow-card: 0 6px 24px rgba(0, 60, 30, 0.08);
+
+  --font-sans:
+    'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', -apple-system, BlinkMacSystemFont,
+    'Segoe UI', Roboto, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--light-green);
+  color: var(--text-main);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+input,
+select {
+  font-family: inherit;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
