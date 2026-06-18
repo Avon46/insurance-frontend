@@ -16,13 +16,7 @@ const route = useRoute()
     <!-- Menu -->
     <q-list padding>
 
-      <q-item
-        clickable
-        to="/recommend"
-        exact
-        :active="route.path === '/recommend'"
-        active-class="menu-active"
-      >
+      <q-item clickable to="/recommend" exact :active="route.path === '/recommend'" active-class="menu-active">
         <q-item-section avatar>
           <q-icon name="auto_awesome" />
         </q-item-section>
@@ -32,13 +26,8 @@ const route = useRoute()
         </q-item-section>
       </q-item>
 
-      <q-item
-        clickable
-        to="/premium-calculator"
-        exact
-        :active="route.path === '/premium-calculator'"
-        active-class="menu-active"
-      >
+      <q-item clickable to="/premium-calculator" exact :active="route.path === '/premium-calculator'"
+        active-class="menu-active">
         <q-item-section avatar>
           <q-icon name="calculate" />
         </q-item-section>
@@ -46,21 +35,9 @@ const route = useRoute()
         <q-item-section>
           保費試算
         </q-item-section>
-
-        <q-item-section side>
-          <q-badge color="grey-7">
-            開發中
-          </q-badge>
-        </q-item-section>
       </q-item>
 
-      <q-item
-        clickable
-        to="/plan-admin"
-        exact
-        :active="route.path === '/plan-admin'"
-        active-class="menu-active"
-      >
+      <q-item clickable to="/plan-admin" exact :active="route.path === '/plan-admin'" active-class="menu-active">
         <q-item-section avatar>
           <q-icon name="assignment" />
         </q-item-section>
@@ -96,7 +73,7 @@ const route = useRoute()
   gap: 10px;
 
   padding: 20px 16px;
-  border-bottom: 1px solid var(--border-grey, rgba(255,255,255,0.15));
+  border-bottom: 1px solid var(--border-grey, rgba(255, 255, 255, 0.15));
 }
 
 .brand__mark {

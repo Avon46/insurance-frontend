@@ -127,7 +127,6 @@ onMounted(async () => {
       planId.value = defaultPlan.id
       age.value = Math.round((defaultPlan.min_age + defaultPlan.max_age) / 2)
     }
-    await handleSubmit()
   } catch {
     errorMessage.value = '無法載入保單清單，請確認後端服務是否啟動後再試一次。'
   } finally {
@@ -207,17 +206,16 @@ onMounted(async () => {
               </svg>
               性別
             </h2>
-            <q-btn-toggle
-              v-model="gender"
-              spread
-              no-caps
-              flat
-              :options="[
-                { label: '男', value: 'M' },
-                { label: '女', value: 'F' },
-              ]"
-              class="gender-toggle full-width"
-            />
+            <div class="btn-group gender-toggle full-width">
+              <q-btn
+                v-for="opt in [{ label: '男', value: 'M' }, { label: '女', value: 'F' }]"
+                :key="opt.value"
+                flat no-caps
+                :label="opt.label"
+                :class="{ 'tgl-active': gender === opt.value }"
+                @click="gender = opt.value as Gender"
+              />
+            </div>
           </section>
 
           <!-- 職業風險等級 -->
@@ -229,37 +227,20 @@ onMounted(async () => {
               </svg>
               職業風險等級
             </h2>
-            <q-btn-toggle
-              v-model="riskLevel"
-              spread
-              no-caps
-              flat
-              :options="[
-                { value: 'LOW', slot: 'low' },
-                { value: 'MEDIUM', slot: 'medium' },
-                { value: 'HIGH', slot: 'high' },
-              ]"
-              class="risk-toggle full-width"
-            >
-              <template #low>
+            <div class="btn-group risk-toggle full-width">
+              <q-btn
+                v-for="opt in riskLevelOptions"
+                :key="opt.value"
+                flat no-caps
+                :class="{ 'tgl-active': riskLevel === opt.value }"
+                @click="riskLevel = opt.value"
+              >
                 <div class="risk-option">
-                  <div class="risk-option__title">低風險</div>
-                  <div class="risk-option__caption">內勤・辦公室工作</div>
+                  <div class="risk-option__title">{{ opt.shortLabel }}</div>
+                  <div class="risk-option__caption">{{ opt.caption }}</div>
                 </div>
-              </template>
-              <template #medium>
-                <div class="risk-option">
-                  <div class="risk-option__title">中風險</div>
-                  <div class="risk-option__caption">外勤・駕駛或拜訪</div>
-                </div>
-              </template>
-              <template #high>
-                <div class="risk-option">
-                  <div class="risk-option__title">高風險</div>
-                  <div class="risk-option__caption">外送・工地等</div>
-                </div>
-              </template>
-            </q-btn-toggle>
+              </q-btn>
+            </div>
           </section>
 
           <!-- 送出按鈕 -->
@@ -313,7 +294,9 @@ onMounted(async () => {
 
           <!-- 尚無結果 -->
           <div v-else-if="!result" class="result-card result-card--idle">
-            <p class="result-card__placeholder-text">填寫左側資料並送出，試算結果會顯示在這裡</p>
+            <q-icon name="calculate" size="56px" color="blue-grey-3" />
+            <div class="idle__title">尚未進行試算</div>
+            <div class="idle__desc">填寫左側條件後，點擊「開始試算」<br>即可查看您的預估保費</div>
           </div>
 
           <!-- 成功 -->
@@ -567,9 +550,15 @@ onMounted(async () => {
   color: var(--text-muted);
 }
 
-/* 性別 / 風險 btn-toggle — 完全由 CSS 控制，不依賴 Quasar 顏色 prop */
+/* 性別 / 風險 toggle */
+.btn-group {
+  display: flex;
+  gap: 10px;
+}
+
 :deep(.gender-toggle .q-btn),
 :deep(.risk-toggle .q-btn) {
+  flex: 1;
   border-radius: var(--radius-sm) !important;
   border: 1.5px solid var(--border-grey) !important;
   background: var(--white) !important;
@@ -577,17 +566,11 @@ onMounted(async () => {
   font-weight: 700;
 }
 
-:deep(.gender-toggle .q-btn.q-btn--active),
-:deep(.risk-toggle .q-btn.q-btn--active) {
+:deep(.gender-toggle .q-btn.tgl-active),
+:deep(.risk-toggle .q-btn.tgl-active) {
   border-color: var(--primary-color) !important;
   background: var(--light-green) !important;
   color: var(--dark-green) !important;
-}
-
-.gender-toggle,
-.risk-toggle {
-  gap: 10px;
-  background: transparent !important;
 }
 
 /* 風險選項自訂內容 */
@@ -680,6 +663,21 @@ onMounted(async () => {
   font-size: 14px;
   color: var(--text-muted);
   max-width: 260px;
+}
+
+.idle__title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 0;
+}
+
+.idle__desc {
+  font-size: 13.5px;
+  color: var(--text-muted);
+  line-height: 1.7;
+  text-align: center;
+  margin: 0;
 }
 
 .result-card__error-icon {
