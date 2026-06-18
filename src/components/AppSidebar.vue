@@ -6,7 +6,6 @@ const route = useRoute()
 
 <template>
   <div class="sidebar">
-
     <!-- Logo -->
     <div class="sidebar__brand">
       <div class="brand__mark">保</div>
@@ -15,7 +14,6 @@ const route = useRoute()
 
     <!-- Menu -->
     <q-list padding>
-
       <q-item
         clickable
         to="/recommend"
@@ -27,9 +25,7 @@ const route = useRoute()
           <q-icon name="auto_awesome" />
         </q-item-section>
 
-        <q-item-section>
-          智慧推薦
-        </q-item-section>
+        <q-item-section> 智慧推薦 </q-item-section>
       </q-item>
 
       <q-item
@@ -43,15 +39,7 @@ const route = useRoute()
           <q-icon name="calculate" />
         </q-item-section>
 
-        <q-item-section>
-          保費試算
-        </q-item-section>
-
-        <q-item-section side>
-          <q-badge color="grey-7">
-            開發中
-          </q-badge>
-        </q-item-section>
+        <q-item-section> 保費試算 </q-item-section>
       </q-item>
 
       <q-item
@@ -65,19 +53,9 @@ const route = useRoute()
           <q-icon name="assignment" />
         </q-item-section>
 
-        <q-item-section>
-          保險方案管理
-        </q-item-section>
-
-        <q-item-section side>
-          <q-badge color="grey-7">
-            開發中
-          </q-badge>
-        </q-item-section>
+        <q-item-section> 保險方案管理 </q-item-section>
       </q-item>
-
     </q-list>
-
   </div>
 </template>
 
@@ -85,8 +63,8 @@ const route = useRoute()
 /* ===== Sidebar 主體（改成 tokens） ===== */
 .sidebar {
   height: 100%;
-  background: var(--dark-green, #007A3D);
-  color: var(--white, #FFFFFF);
+  background: var(--dark-green, #007a3d);
+  color: var(--white, #ffffff);
 }
 
 /* ===== Logo 區 ===== */
@@ -96,7 +74,7 @@ const route = useRoute()
   gap: 10px;
 
   padding: 20px 16px;
-  border-bottom: 1px solid var(--border-grey, rgba(255,255,255,0.15));
+  border-bottom: 1px solid var(--border-grey, rgba(255, 255, 255, 0.15));
 }
 
 .brand__mark {
@@ -105,7 +83,7 @@ const route = useRoute()
   border-radius: 8px;
 
   background: rgba(255, 255, 255, 0.2);
-  color: var(--white, #FFFFFF);
+  color: var(--white, #ffffff);
 
   display: flex;
   align-items: center;
@@ -117,7 +95,7 @@ const route = useRoute()
 .brand__name {
   font-size: 14px;
   font-weight: 700;
-  color: var(--white, #FFFFFF);
+  color: var(--white, #ffffff);
 }
 
 /* ===== Quasar Item ===== */
@@ -131,14 +109,14 @@ const route = useRoute()
 
 /* hover */
 :deep(.q-item:hover) {
-  background: var(--primary-color, #05994D);
-  color: var(--white, #FFFFFF);
+  background: var(--primary-color, #05994d);
+  color: var(--white, #ffffff);
 }
 
 /* active（目前選中） */
 :deep(.menu-active) {
-  background: var(--primary-color, #05994D);
-  color: var(--white, #FFFFFF);
+  background: var(--primary-color, #05994d);
+  color: var(--white, #ffffff);
   font-weight: 600;
 }
 
