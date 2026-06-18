@@ -1,0 +1,625 @@
+<template>
+  <div class="result-section">
+    <!-- Loading State -->
+    <div v-if="loading" class="loading-state">
+      <div class="loading-cards">
+        <div v-for="n in 3" :key="n" class="skeleton-card">
+          <div class="skeleton-rank"></div>
+          <div class="skeleton-body">
+            <div class="skeleton-line wide"></div>
+            <div class="skeleton-line medium"></div>
+            <div class="skeleton-line short"></div>
+          </div>
+          <div class="skeleton-score"></div>
+        </div>
+      </div>
+      <div class="loading-label">
+        <q-spinner-dots color="primary" size="24px" />
+        AI 正在為您比對最適合的保單...
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div v-else-if="!results || results.length === 0" class="empty-state">
+      <div class="empty-icon">
+        <q-icon name="policy" size="56px" color="blue-grey-3" />
+      </div>
+      <div class="empty-title">尚未進行推薦</div>
+      <div class="empty-sub">填寫上方條件後，AI 將為您精選最適合的保單</div>
+    </div>
+
+    <!-- Results -->
+    <div v-else class="results-container">
+      <div class="results-header">
+        <div class="results-title">
+          <q-icon name="auto_awesome" size="18px" class="gold-icon" />
+          為您精選 Top {{ results.length }} 保單
+        </div>
+        <div class="results-meta">
+          匹配依據：{{ criteriaText }}
+        </div>
+      </div>
+
+      <div class="result-cards">
+        <div
+          v-for="(plan, index) in results"
+          :key="plan.id"
+          class="result-card"
+          :class="[`rank-${index + 1}`, { revealed: plan.revealed }]"
+          @animationend="plan.revealed = true"
+        >
+          <!-- Rank Badge -->
+          <div class="rank-badge" :class="`badge-${index + 1}`">
+            <span class="rank-num">{{ index + 1 }}</span>
+          </div>
+
+          <!-- Card Body -->
+          <div class="card-main">
+            <div class="plan-meta">
+              <span class="plan-company">{{ plan.company }}</span>
+              <div class="plan-tags">
+                <span v-for="tag in plan.tags" :key="tag" class="plan-tag">{{ tag }}</span>
+              </div>
+            </div>
+            <div class="plan-name">{{ plan.name }}</div>
+            <div class="plan-coverage">
+              <div v-for="item in plan.coverageHighlights" :key="item" class="coverage-item">
+                <q-icon name="check_circle" size="14px" color="positive" />
+                {{ item }}
+              </div>
+            </div>
+            <div class="plan-price-row">
+              <div class="plan-price">
+                <span class="price-label">月繳</span>
+                <span class="price-value">NT$ {{ plan.monthlyPremium.toLocaleString() }}</span>
+              </div>
+              <div class="plan-period">{{ plan.coveragePeriod }}</div>
+            </div>
+          </div>
+
+          <!-- Score Ring -->
+          <div class="score-section">
+            <div class="score-ring-wrap">
+              <svg class="score-ring" viewBox="0 0 64 64" width="64" height="64">
+                <circle
+                  class="ring-bg"
+                  cx="32" cy="32" r="26"
+                  fill="none"
+                  stroke-width="6"
+                />
+                <circle
+                  class="ring-fill"
+                  :class="`ring-${index + 1}`"
+                  cx="32" cy="32" r="26"
+                  fill="none"
+                  stroke-width="6"
+                  stroke-linecap="round"
+                  :style="ringStyle(plan.matchingScore)"
+                />
+              </svg>
+              <div class="score-inner">
+                <span class="score-num">{{ plan.matchingScore }}</span>
+                <span class="score-pct">%</span>
+              </div>
+            </div>
+            <div class="score-label">匹配度</div>
+            <div class="score-breakdown">
+              <div
+                v-for="dim in plan.scoreBreakdown"
+                :key="dim.label"
+                class="dim-row"
+                :title="`${dim.label}: ${dim.score}分`"
+              >
+                <span class="dim-label">{{ dim.label }}</span>
+                <div class="dim-bar-wrap">
+                  <div
+                    class="dim-bar"
+                    :style="{ width: dim.score + '%' }"
+                    :class="`dim-bar-${index + 1}`"
+                  ></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- AI Reason -->
+          <div class="ai-reason">
+            <q-icon name="psychology" size="14px" class="ai-icon" />
+            <span>{{ plan.aiReason }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Disclaimer -->
+      <div class="disclaimer">
+        <q-icon name="info_outline" size="14px" />
+        以上推薦為 AI 依據您的條件自動匹配，實際保費與保障條件請洽保險業務員確認。
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { computed } from 'vue'
+import type { RecommendResultProps, InsuranceType } from '@/types/types'
+
+const props = withDefaults(defineProps<RecommendResultProps>(), {
+  results: () => [],
+  loading: false,
+  criteria: () => ({})
+})
+
+const CIRCUMFERENCE = 2 * Math.PI * 26 // ~163.4
+
+const ringStyle = (score: number): Record<string, string> => {
+  const offset = CIRCUMFERENCE * (1 - score / 100)
+  return {
+    strokeDasharray: String(CIRCUMFERENCE),
+    strokeDashoffset: String(offset),
+    transition: 'stroke-dashoffset 1.2s cubic-bezier(0.4, 0, 0.2, 1) 0.3s'
+  }
+}
+
+const insuranceTypeMap: Record<InsuranceType, string> = {
+  life: '壽險',
+  medical: '醫療險',
+  cancer: '癌症險',
+  accident: '意外險',
+  longterm_care: '長照險',
+  critical: '重大疾病險'
+}
+
+const criteriaText = computed<string>(() => {
+  const types = props.criteria?.insuranceTypes
+  if (!types) return ''
+  const labels = types.map(t => insuranceTypeMap[t] ?? t).join('、')
+  return `月繳 NT$${props.criteria?.budget?.toLocaleString() ?? ''} · ${labels}`
+})
+</script>
+
+<style scoped>
+.result-section {
+  min-height: 200px;
+}
+
+/* Loading skeleton */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.loading-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.skeleton-card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 24px;
+  border-radius: 16px;
+  background: #f4fbf7;
+  border: 1px solid #E5E5E5;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.skeleton-rank {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #E5E5E5;
+  flex-shrink: 0;
+}
+
+.skeleton-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.skeleton-line {
+  height: 12px;
+  border-radius: 6px;
+  background: #E5E5E5;
+}
+
+.skeleton-line.wide { width: 60%; }
+.skeleton-line.medium { width: 40%; }
+.skeleton-line.short { width: 25%; }
+
+.skeleton-score {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #E5E5E5;
+  flex-shrink: 0;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.loading-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 14px;
+  color: #333333;
+  padding: 8px;
+}
+
+/* Empty state */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  gap: 12px;
+}
+
+.empty-icon {
+  margin-bottom: 8px;
+}
+
+.empty-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #888888;
+}
+
+.empty-sub {
+  font-size: 13px;
+  color: #bbbbbb;
+  text-align: center;
+}
+
+/* Results */
+.results-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.results-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.results-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #007A3D;
+}
+
+.gold-icon {
+  color: #05994D;
+}
+
+.results-meta {
+  font-size: 12px;
+  color: #888888;
+}
+
+/* Card */
+.result-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.result-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: auto auto;
+  gap: 0;
+  border-radius: 16px;
+  border: 2px solid #E5E5E5;
+  background: #FFFFFF;
+  overflow: hidden;
+  padding: 20px 20px 0 20px;
+  animation: slideUp 0.5s ease forwards;
+  opacity: 0;
+  transform: translateY(12px);
+}
+
+.result-card:nth-child(1) { animation-delay: 0.05s; }
+.result-card:nth-child(2) { animation-delay: 0.15s; }
+.result-card:nth-child(3) { animation-delay: 0.25s; }
+
+@keyframes slideUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.result-card.rank-1 { border-color: #007A3D; box-shadow: 0 4px 20px rgba(5,153,77,0.18); }
+.result-card.rank-2 { border-color: #05994D; }
+.result-card.rank-3 { border-color: #E5E5E5; }
+
+/* Rank badge */
+.rank-badge {
+  position: absolute;
+  top: -1px;
+  left: 20px;
+  width: 36px;
+  height: 36px;
+  border-radius: 0 0 10px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.badge-1 { background: linear-gradient(180deg, #007A3D, #005a2d); }
+.badge-2 { background: linear-gradient(180deg, #05994D, #007A3D); }
+.badge-3 { background: linear-gradient(180deg, #3dba75, #05994D); }
+
+.rank-num {
+  font-size: 15px;
+  font-weight: 800;
+  color: white;
+}
+
+/* Card main content */
+.card-main {
+  grid-column: 1;
+  grid-row: 1;
+  padding-top: 28px;
+  padding-right: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.plan-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.plan-company {
+  font-size: 11px;
+  font-weight: 600;
+  color: #05994D;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.plan-tags {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.plan-tag {
+  font-size: 10px;
+  padding: 2px 8px;
+  background: #E8F5EE;
+  color: #333333;
+  border-radius: 999px;
+  font-weight: 500;
+}
+
+.plan-name {
+  font-size: 17px;
+  font-weight: 700;
+  color: #007A3D;
+  font-family: 'Noto Serif TC', serif;
+  line-height: 1.3;
+}
+
+.plan-coverage {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 2px;
+}
+
+.coverage-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #333333;
+}
+
+.plan-price-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 4px;
+}
+
+.plan-price {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.price-label {
+  font-size: 11px;
+  color: #888888;
+}
+
+.price-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: #007A3D;
+}
+
+.plan-period {
+  font-size: 12px;
+  color: #888888;
+  border-left: 1px solid #E5E5E5;
+  padding-left: 16px;
+}
+
+/* Score section */
+.score-section {
+  grid-column: 2;
+  grid-row: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding-top: 24px;
+  min-width: 80px;
+}
+
+.score-ring-wrap {
+  position: relative;
+  width: 64px;
+  height: 64px;
+}
+
+.score-ring {
+  transform: rotate(-90deg);
+}
+
+.ring-bg {
+  stroke: #E5E5E5;
+}
+
+.ring-1 { stroke: #007A3D; }
+.ring-2 { stroke: #05994D; }
+.ring-3 { stroke: #3dba75; }
+
+.score-inner {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+}
+
+.score-num {
+  font-size: 16px;
+  font-weight: 800;
+  color: #007A3D;
+  line-height: 1;
+}
+
+.score-pct {
+  font-size: 10px;
+  color: #888888;
+  align-self: flex-end;
+  margin-bottom: 2px;
+}
+
+.score-label {
+  font-size: 11px;
+  color: #888888;
+  font-weight: 500;
+}
+
+.score-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+  min-width: 70px;
+}
+
+.dim-row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.dim-label {
+  font-size: 9px;
+  color: #bbbbbb;
+  white-space: nowrap;
+}
+
+.dim-bar-wrap {
+  height: 3px;
+  background: #E8F5EE;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.dim-bar {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 1s cubic-bezier(0.4, 0, 0.2, 1) 0.5s;
+}
+
+.dim-bar-1 { background: #007A3D; }
+.dim-bar-2 { background: #05994D; }
+.dim-bar-3 { background: #3dba75; }
+
+/* AI Reason */
+.ai-reason {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 12px 16px;
+  margin: 12px -20px 0 -20px;
+  background: #f4fbf7;
+  border-top: 1px solid #E5E5E5;
+  font-size: 12px;
+  color: #333333;
+  line-height: 1.5;
+}
+
+.ai-icon {
+  color: #05994D;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* Disclaimer */
+.disclaimer {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  font-size: 11px;
+  color: #bbbbbb;
+  padding: 0 4px;
+  line-height: 1.5;
+}
+
+@media (max-width: 600px) {
+  .result-card {
+    grid-template-columns: 1fr;
+    padding: 16px;
+  }
+  .score-section {
+    grid-column: 1;
+    grid-row: 2;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 0;
+    padding-bottom: 4px;
+    gap: 12px;
+  }
+  .score-breakdown {
+    flex-direction: row;
+    gap: 8px;
+  }
+  .dim-bar-wrap {
+    width: 40px;
+  }
+  .ai-reason {
+    grid-row: 3;
+    margin: 0 -16px;
+  }
+}
+</style>
