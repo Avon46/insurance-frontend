@@ -16,18 +16,6 @@ const isExpanded = ref(true)
 
     <!-- 導覽選單 -->
     <nav class="sidebar__nav" aria-label="主選單">
-      <!-- 保費試算 -->
-      <router-link to="/premium-calculator" class="nav-item"
-        :class="{ 'nav-item--active': route.path === '/premium-calculator' }" :title="!isExpanded ? '保費試算' : undefined">
-        <svg class="nav-item__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <rect x="3" y="3" width="18" height="18" rx="3" stroke="currentColor" stroke-width="1.7" />
-          <path d="M7 8h4M7 12h4M7 16h4M14 12h3M14 16h3" stroke="currentColor" stroke-width="1.7"
-            stroke-linecap="round" />
-          <rect x="14" y="7" width="3" height="2.5" rx="0.5" fill="currentColor" />
-        </svg>
-        <span class="nav-item__label">保費試算</span>
-      </router-link>
-
       <!-- 保險方案管理 -->
       <router-link to="/plan-admin" class="nav-item" :class="{ 'nav-item--active': route.path === '/plan-admin' }"
         :title="!isExpanded ? '保險方案管理' : undefined">
@@ -42,7 +30,17 @@ const isExpanded = ref(true)
         <span class="nav-item__label">保險方案管理</span>
         <span class="nav-item__badge">開發中</span>
       </router-link>
-
+      <!-- 保費試算 -->
+      <router-link to="/premium-calculator" class="nav-item"
+        :class="{ 'nav-item--active': route.path === '/premium-calculator' }" :title="!isExpanded ? '保費試算' : undefined">
+        <svg class="nav-item__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <rect x="3" y="3" width="18" height="18" rx="3" stroke="currentColor" stroke-width="1.7" />
+          <path d="M7 8h4M7 12h4M7 16h4M14 12h3M14 16h3" stroke="currentColor" stroke-width="1.7"
+            stroke-linecap="round" />
+          <rect x="14" y="7" width="3" height="2.5" rx="0.5" fill="currentColor" />
+        </svg>
+        <span class="nav-item__label">保費試算</span>
+      </router-link>
       <!-- 智慧推薦 -->
       <router-link to="/recommend" class="nav-item" :class="{ 'nav-item--active': route.path === '/recommend' }"
         :title="!isExpanded ? '智慧推薦' : undefined">
