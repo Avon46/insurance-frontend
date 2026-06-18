@@ -137,6 +137,7 @@ onMounted(async () => {
 </script>
 
 <template>
+  <q-page>
   <div class="page">
     <div class="layout">
       <!-- 左側：輸入卡 -->
@@ -210,12 +211,7 @@ onMounted(async () => {
               v-model="gender"
               spread
               no-caps
-              unelevated
-              outline
-              toggle-color="primary"
-              color="white"
-              text-color="grey-9"
-              toggle-text-color="white"
+              flat
               :options="[
                 { label: '男', value: 'M' },
                 { label: '女', value: 'F' },
@@ -237,12 +233,7 @@ onMounted(async () => {
               v-model="riskLevel"
               spread
               no-caps
-              unelevated
-              outline
-              toggle-color="primary"
-              color="white"
-              text-color="grey-9"
-              toggle-text-color="white"
+              flat
               :options="[
                 { value: 'LOW', slot: 'low' },
                 { value: 'MEDIUM', slot: 'medium' },
@@ -428,6 +419,7 @@ onMounted(async () => {
       </div>
     </div>
   </div>
+  </q-page>
 </template>
 
 <style scoped>
@@ -575,11 +567,13 @@ onMounted(async () => {
   color: var(--text-muted);
 }
 
-/* 性別 / 風險 btn-toggle */
+/* 性別 / 風險 btn-toggle — 完全由 CSS 控制，不依賴 Quasar 顏色 prop */
 :deep(.gender-toggle .q-btn),
 :deep(.risk-toggle .q-btn) {
   border-radius: var(--radius-sm) !important;
-  border-color: var(--border-grey) !important;
+  border: 1.5px solid var(--border-grey) !important;
+  background: var(--white) !important;
+  color: var(--text-main) !important;
   font-weight: 700;
 }
 
@@ -593,6 +587,7 @@ onMounted(async () => {
 .gender-toggle,
 .risk-toggle {
   gap: 10px;
+  background: transparent !important;
 }
 
 /* 風險選項自訂內容 */

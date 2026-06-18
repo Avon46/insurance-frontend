@@ -1,26 +1,27 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import AppSidebar from '@/components/AppSidebar.vue'
+
+const leftDrawerOpen = ref(false)
+const isMini = ref(false)
 </script>
 
 <template>
-  <div class="app-shell">
-    <AppSidebar />
-    <main class="app-main">
+  <q-layout view="lHh Lpr lFf">
+    <q-drawer
+      v-model="leftDrawerOpen"
+      show-if-above
+      :width="220"
+      :mini-width="60"
+      :mini="isMini"
+      :breakpoint="760"
+      style="background: var(--dark-green)"
+    >
+      <AppSidebar :mini="isMini" @toggle="isMini = !isMini" />
+    </q-drawer>
+
+    <q-page-container>
       <router-view />
-    </main>
-  </div>
+    </q-page-container>
+  </q-layout>
 </template>
-
-<style scoped>
-.app-shell {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: row;
-}
-
-.app-main {
-  flex: 1;
-  min-width: 0;
-  overflow-y: auto;
-}
-</style>

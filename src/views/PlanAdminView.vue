@@ -1,5 +1,5 @@
 <template>
-  <div class="placeholder-page">
+  <q-page class="placeholder-page">
     <div class="placeholder-card">
       <div class="placeholder-card__icon">
         <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
@@ -30,12 +30,12 @@
       </div>
       <span class="placeholder-card__badge">開發中</span>
     </div>
-  </div>
+  </q-page>
 </template>
 
 <style scoped>
 .placeholder-page {
-  min-height: 100vh;
+  min-height: inherit;
   display: flex;
   align-items: center;
   justify-content: center;
