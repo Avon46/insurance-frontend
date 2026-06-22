@@ -3,10 +3,10 @@
 // ─────────────────────────────────────────────────────────
 
 /** 客群分類 */
-export type Segment = 'teenager' | 'middle_aged' | 'senior'
+export type Segment = 'young_adult' | 'middle_aged' | 'senior'
 
 /** 保障年期 */
-export type CoveragePeriod = 'term_10' | 'term_20' | 'lifetime'
+export type CoveragePeriod = 'term_1'|'term_10' | 'term_20' | 'lifetime'
 
 /** 險種類型 */
 export type InsuranceType =
@@ -27,10 +27,10 @@ export type HealthStatus = 'excellent' | 'good' | 'fair'
 /** SearchForm 使用者輸入的搜尋條件 */
 export interface SearchCriteria {
   segment: Segment
+  age: number
   budget: number
   coveragePeriod: CoveragePeriod
   insuranceTypes: InsuranceType[]
-  healthStatus: HealthStatus
 }
 
 /** 客群選項（UI 顯示用） */
@@ -79,19 +79,17 @@ export type AiReasonTemplate = Partial<Record<Segment, string>>
 export interface InsurancePlan {
   id: string
   name: string
-  company: string
+  category?: string
   types: InsuranceType[]
-  monthlyPremium: number
+  basePremium: number
   coveragePeriod: string
-  coveragePeriods: CoveragePeriod[]
+  //coveragePeriods: CoveragePeriod[]
   coverageHighlights: string[]
   tags: string[]
-  baseScore: {
-    budget: number
-    typeMatch: number
-    period: number
-    health: number
-  }
+  rank : number
+  ageScore:number
+  budgetScore:number
+  score: number
   aiReasonTemplate: AiReasonTemplate
 }
 

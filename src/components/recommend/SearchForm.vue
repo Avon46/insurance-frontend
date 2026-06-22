@@ -31,6 +31,28 @@
           </div>
         </div>
 
+        <!-- 年齡 -->
+        <div class="form-group">
+          <div class="field-label">
+            <q-icon name="cake" size="16px" class="label-icon" />
+            年齡
+          </div>
+
+          <q-input
+            v-model.number="form.age"
+            type="number"
+            outlined
+            dense
+            placeholder="請輸入年齡"
+            :rules="[
+              (val) => (val !== null && val !== undefined) || '請輸入年齡',
+              (val) => (val > 0 && val <= 120) || '請輸入正確年齡',
+            ]"
+            class="age-input"
+          >
+          </q-input>
+        </div>
+
         <!-- 預算上限 -->
         <div class="form-group">
           <div class="field-label">
@@ -42,16 +64,16 @@
           </div>
           <q-slider
             v-model="form.budget"
-            :min="500"
-            :max="10000"
+            :min="1000"
+            :max="300000"
             :step="500"
             color="primary"
             track-color="blue-grey-2"
             class="budget-slider"
           />
           <div class="slider-labels">
-            <span>NT$ 500</span>
-            <span>NT$ 10,000</span>
+            <span>NT$ 1000</span>
+            <span>NT$ 300,000</span>
           </div>
         </div>
 
@@ -74,7 +96,7 @@
           </div>
         </div>
 
-        <!-- 險種需求 (多選) -->
+        <!-- 險種需求 (可多選) -->
         <div class="form-group full-width">
           <div class="field-label">
             <q-icon name="security" size="16px" class="label-icon" />
@@ -100,26 +122,6 @@
             </label>
           </div>
         </div>
-
-        <!-- 健康狀況 -->
-        <!-- <div class="form-group full-width">
-          <div class="field-label">
-            <q-icon name="favorite" size="16px" class="label-icon" />
-            目前健康狀況
-          </div>
-          <div class="health-options">
-            <label
-              v-for="opt in healthOptions"
-              :key="opt.value"
-              class="health-card"
-              :class="{ active: form.healthStatus === opt.value }"
-            >
-              <input type="radio" v-model="form.healthStatus" :value="opt.value" hidden />
-              <q-icon :name="opt.icon" size="22px" :class="opt.colorClass" />
-              <span class="health-label">{{ opt.label }}</span>
-            </label>
-          </div>
-        </div> -->
       </div>
     </q-card-section>
 
@@ -156,34 +158,34 @@ import type {
   SegmentOption,
   CoveragePeriodOption,
   InsuranceTypeOption,
-  HealthOption,
-  InsuranceType
+  InsuranceType,
 } from '@/types/types'
 
 withDefaults(defineProps<SearchFormProps>(), {
-  loading: false
+  loading: false,
 })
 
 const emit = defineEmits<SearchFormEmits>()
 
 const form = ref<SearchCriteria>({
-  segment: 'middle_aged',
+  segment: 'young_adult',
+  age: 18,
   budget: 3000,
   coveragePeriod: 'lifetime',
   insuranceTypes: ['medical', 'critical'],
-  healthStatus: 'good'
 })
 
 const segments: SegmentOption[] = [
-  { value: 'teenager', label: '青少年族群', desc: '13-30 歲', icon: 'directions_run' },
+  { value: 'young_adult', label: '青年族群', desc: '18-30 歲', icon: 'directions_run' },
   { value: 'middle_aged', label: '中年族群', desc: '35–55 歲', icon: 'person' },
-  { value: 'senior', label: '銀髮族群', desc: '55 歲以上', icon: 'elderly' }
+  { value: 'senior', label: '銀髮族群', desc: '55 歲以上', icon: 'elderly' },
 ]
 
 const coveragePeriods: CoveragePeriodOption[] = [
+  { value: 'term_1', label: '1 年期' },
   { value: 'term_10', label: '10 年期' },
   { value: 'term_20', label: '20 年期' },
-  { value: 'lifetime', label: '終身' }
+  { value: 'lifetime', label: '終身' },
 ]
 
 const insuranceTypes: InsuranceTypeOption[] = [
@@ -192,14 +194,8 @@ const insuranceTypes: InsuranceTypeOption[] = [
   { value: 'cancer', label: '癌症險', icon: 'biotech' },
   { value: 'accident', label: '意外險', icon: 'warning_amber' },
   { value: 'longterm_care', label: '長照險', icon: 'elderly_woman' },
-  { value: 'critical', label: '重大疾病險', icon: 'monitor_heart' }
+  { value: 'critical', label: '重大疾病險', icon: 'monitor_heart' },
 ]
-
-// const healthOptions: HealthOption[] = [
-//   { value: 'excellent', label: '非常健康', icon: 'sentiment_very_satisfied', colorClass: 'text-green' },
-//   { value: 'good', label: '一般健康', icon: 'sentiment_satisfied', colorClass: 'text-primary' },
-//   { value: 'fair', label: '有慢性病史', icon: 'sentiment_neutral', colorClass: 'text-orange' }
-// ]
 
 const toggleType = (val: InsuranceType): void => {
   const idx = form.value.insuranceTypes.indexOf(val)
@@ -214,9 +210,9 @@ const isFormValid = computed<boolean>(() => form.value.insuranceTypes.length > 0
 
 const summaryText = computed<string>(() => {
   if (!isFormValid.value) return ''
-  const seg = segments.find(s => s.value === form.value.segment)?.label
+  const seg = segments.find((s) => s.value === form.value.segment)?.label
   const types = form.value.insuranceTypes
-    .map(t => insuranceTypes.find(i => i.value === t)?.label)
+    .map((t) => insuranceTypes.find((i) => i.value === t)?.label)
     .join('、')
   return `${seg} · 月繳 NT$${form.value.budget.toLocaleString()} · ${types}`
 })
@@ -229,13 +225,13 @@ const onSubmit = (): void => {
 <style scoped>
 .search-form-card {
   border-radius: 16px !important;
-  border: 1px solid #E5E5E5 !important;
+  border: 1px solid #e5e5e5 !important;
   overflow: hidden;
-  background: #FFFFFF;
+  background: #ffffff;
 }
 
 .form-header {
-  background: linear-gradient(135deg, #007A3D 0%, #05994D 100%);
+  background: linear-gradient(135deg, #007a3d 0%, #05994d 100%);
   padding: 28px 32px;
 }
 
@@ -244,21 +240,21 @@ const onSubmit = (): void => {
   font-weight: 600;
   letter-spacing: 2px;
   text-transform: uppercase;
-  color: #E8F5EE;
+  color: #e8f5ee;
   margin-bottom: 8px;
 }
 
 .header-title {
   font-size: 24px;
   font-weight: 700;
-  color: #FFFFFF;
+  color: #ffffff;
   margin-bottom: 4px;
   font-family: 'Noto Serif TC', serif;
 }
 
 .header-sub {
   font-size: 13px;
-  color: rgba(255,255,255,0.75);
+  color: rgba(255, 255, 255, 0.75);
 }
 
 .form-body {
@@ -287,12 +283,12 @@ const onSubmit = (): void => {
   gap: 6px;
   font-size: 13px;
   font-weight: 600;
-  color: #007A3D;
+  color: #007a3d;
   letter-spacing: 0.3px;
 }
 
 .label-icon {
-  color: #05994D;
+  color: #05994d;
 }
 
 .hint {
@@ -315,7 +311,7 @@ const onSubmit = (): void => {
   align-items: center;
   gap: 4px;
   padding: 16px 12px;
-  border: 2px solid #E5E5E5;
+  border: 2px solid #e5e5e5;
   border-radius: 12px;
   cursor: pointer;
   background: #f4fbf7;
@@ -324,19 +320,19 @@ const onSubmit = (): void => {
 }
 
 .segment-btn:hover {
-  border-color: #05994D;
-  background: #E8F5EE;
+  border-color: #05994d;
+  background: #e8f5ee;
 }
 
 .segment-btn.active {
-  border-color: #007A3D;
-  background: #E8F5EE;
+  border-color: #007a3d;
+  background: #e8f5ee;
 }
 
 .segment-btn span:nth-child(2) {
   font-size: 14px;
   font-weight: 600;
-  color: #007A3D;
+  color: #007a3d;
 }
 
 .seg-desc {
@@ -353,7 +349,7 @@ const onSubmit = (): void => {
 .budget-value {
   font-size: 22px;
   font-weight: 700;
-  color: #007A3D;
+  color: #007a3d;
   margin-left: 2px;
 }
 
@@ -380,7 +376,7 @@ const onSubmit = (): void => {
   align-items: center;
   justify-content: center;
   padding: 10px 8px;
-  border: 2px solid #E5E5E5;
+  border: 2px solid #e5e5e5;
   border-radius: 8px;
   cursor: pointer;
   font-size: 13px;
@@ -391,12 +387,12 @@ const onSubmit = (): void => {
 }
 
 .radio-card:hover {
-  border-color: #05994D;
+  border-color: #05994d;
 }
 
 .radio-card.active {
-  border-color: #05994D;
-  background: #E8F5EE;
+  border-color: #05994d;
+  background: #e8f5ee;
   color: #005a2d;
   font-weight: 600;
 }
@@ -413,7 +409,7 @@ const onSubmit = (): void => {
   align-items: center;
   gap: 6px;
   padding: 8px 14px;
-  border: 2px solid #E5E5E5;
+  border: 2px solid #e5e5e5;
   border-radius: 999px;
   cursor: pointer;
   font-size: 13px;
@@ -426,18 +422,18 @@ const onSubmit = (): void => {
 }
 
 .type-chip:hover {
-  border-color: #05994D;
-  color: #007A3D;
+  border-color: #05994d;
+  color: #007a3d;
 }
 
 .type-chip.active {
-  border-color: #007A3D;
-  background: #007A3D;
-  color: #FFFFFF;
+  border-color: #007a3d;
+  background: #007a3d;
+  color: #ffffff;
 }
 
 .check-icon {
-  color: #E8F5EE;
+  color: #e8f5ee;
 }
 
 /* Health */
@@ -453,7 +449,7 @@ const onSubmit = (): void => {
   align-items: center;
   gap: 6px;
   padding: 14px 8px;
-  border: 2px solid #E5E5E5;
+  border: 2px solid #e5e5e5;
   border-radius: 12px;
   cursor: pointer;
   background: #f4fbf7;
@@ -461,19 +457,19 @@ const onSubmit = (): void => {
 }
 
 .health-card:hover {
-  border-color: #05994D;
-  background: #E8F5EE;
+  border-color: #05994d;
+  background: #e8f5ee;
 }
 
 .health-card.active {
-  border-color: #007A3D;
-  background: #E8F5EE;
+  border-color: #007a3d;
+  background: #e8f5ee;
 }
 
 .health-label {
   font-size: 12px;
   font-weight: 500;
-  color: #007A3D;
+  color: #007a3d;
 }
 
 /* Footer */
@@ -495,7 +491,7 @@ const onSubmit = (): void => {
 }
 
 .search-btn {
-  background: linear-gradient(135deg, #05994D, #007A3D) !important;
+  background: linear-gradient(135deg, #05994d, #007a3d) !important;
   color: white !important;
   font-size: 14px !important;
   font-weight: 600 !important;
