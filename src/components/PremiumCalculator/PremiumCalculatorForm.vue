@@ -107,10 +107,7 @@ const emit = defineEmits<{
       <!-- 職業風險等級 -->
       <section class="field-group">
         <h2 class="field-group__label">
-          <svg class="field-group__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6l-8-3Z" stroke="currentColor" stroke-width="1.6"
-              stroke-linejoin="round" />
-          </svg>
+          <q-icon name="security" size="16px" class="label-icon" />
           職業風險等級
         </h2>
         <div class="btn-group risk-toggle full-width">
@@ -147,12 +144,12 @@ const emit = defineEmits<{
 }
 
 .hero__eyebrow {
-  margin: 0 0 8px;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  color: rgba(255, 255, 255, 0.75);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 2px;
   text-transform: uppercase;
+  color: #e8f5ee;
+  margin-bottom: 8px;
 }
 
 .hero__title {
@@ -189,6 +186,10 @@ const emit = defineEmits<{
 
 .field-group__label--inline {
   margin: 0;
+}
+
+.label-icon {
+  color: #05994d;
 }
 
 .field-group__icon {

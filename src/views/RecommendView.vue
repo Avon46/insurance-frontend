@@ -3,10 +3,6 @@
     <div class="page-container">
       <!-- Page Header -->
       <div class="page-header">
-        <div class="brand-mark">
-          <q-icon name="shield" size="20px" />
-          保險智慧推薦
-        </div>
       </div>
 
       <!-- Main Layout -->
@@ -18,11 +14,7 @@
 
         <!-- Right: Results -->
         <div class="result-column">
-          <RecommendResult
-            :results="results"
-            :loading="loading"
-            :criteria="lastCriteria"
-          />
+          <RecommendResult :results="results" :loading="loading" :criteria="lastCriteria" />
         </div>
       </div>
     </div>
@@ -172,7 +164,7 @@ async function handleSearch(criteria: SearchCriteria) {
   font-weight: 600;
   color: #007A3D;
   letter-spacing: 0.5px;
-  background: rgba(255,255,255,0.8);
+  background: rgba(255, 255, 255, 0.8);
   padding: 6px 14px;
   border-radius: 999px;
   border: 1px solid #E5E5E5;
