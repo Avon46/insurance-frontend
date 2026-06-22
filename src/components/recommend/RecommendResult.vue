@@ -15,7 +15,7 @@
       </div>
       <div class="loading-label">
         <q-spinner-dots color="primary" size="24px" />
-        AI 正在為您比對最適合的保單...
+        系統正在為您比對最適合的保單...
       </div>
     </div>
 
@@ -25,7 +25,7 @@
         <q-icon name="policy" size="56px" color="blue-grey-3" />
       </div>
       <div class="empty-title">尚未進行推薦</div>
-      <div class="empty-sub">填寫上方條件後，AI 將為您精選最適合的保單</div>
+      <div class="empty-sub">填寫上方條件後，系統將為您精選最適合的保單</div>
     </div>
 
     <!-- Results -->
@@ -35,9 +35,7 @@
           <q-icon name="auto_awesome" size="18px" class="gold-icon" />
           為您精選 Top {{ results.length }} 保單
         </div>
-        <div class="results-meta">
-          匹配依據：{{ criteriaText }}
-        </div>
+        <div class="results-meta">匹配依據：{{ criteriaText }}</div>
       </div>
 
       <div class="result-cards">
@@ -56,9 +54,12 @@
           <!-- Card Body -->
           <div class="card-main">
             <div class="plan-meta">
-              <span class="plan-company">{{ plan.company }}</span>
-              <div class="plan-tags">
-                <span v-for="tag in plan.tags" :key="tag" class="plan-tag">{{ tag }}</span>
+              <div class="plan-tags-row">
+                <div class="plan-tags">
+                  <span v-for="tag in plan.tags" :key="tag" class="plan-tag">
+                    {{ tag }}
+                  </span>
+                </div>
               </div>
             </div>
             <div class="plan-name">{{ plan.name }}</div>
@@ -71,7 +72,7 @@
             <div class="plan-price-row">
               <div class="plan-price">
                 <span class="price-label">月繳</span>
-                <span class="price-value">NT$ {{ plan.monthlyPremium.toLocaleString() }}</span>
+                <span class="price-value">NT$ {{ plan.basePremium.toLocaleString() }}</span>
               </div>
               <div class="plan-period">{{ plan.coveragePeriod }}</div>
             </div>
@@ -81,16 +82,13 @@
           <div class="score-section">
             <div class="score-ring-wrap">
               <svg class="score-ring" viewBox="0 0 64 64" width="64" height="64">
-                <circle
-                  class="ring-bg"
-                  cx="32" cy="32" r="26"
-                  fill="none"
-                  stroke-width="6"
-                />
+                <circle class="ring-bg" cx="32" cy="32" r="26" fill="none" stroke-width="6" />
                 <circle
                   class="ring-fill"
                   :class="`ring-${index + 1}`"
-                  cx="32" cy="32" r="26"
+                  cx="32"
+                  cy="32"
+                  r="26"
                   fill="none"
                   stroke-width="6"
                   stroke-linecap="round"
@@ -133,7 +131,7 @@
       <!-- Disclaimer -->
       <div class="disclaimer">
         <q-icon name="info_outline" size="14px" />
-        以上推薦為 AI 依據您的條件自動匹配，實際保費與保障條件請洽保險業務員確認。
+        以上推薦為系統依據您的條件自動匹配，實際保費與保障條件請洽保險業務員確認。
       </div>
     </div>
   </div>
@@ -146,7 +144,7 @@ import type { RecommendResultProps, InsuranceType } from '@/types/types'
 const props = withDefaults(defineProps<RecommendResultProps>(), {
   results: () => [],
   loading: false,
-  criteria: () => ({})
+  criteria: () => ({}),
 })
 
 const CIRCUMFERENCE = 2 * Math.PI * 26 // ~163.4
@@ -156,7 +154,7 @@ const ringStyle = (score: number): Record<string, string> => {
   return {
     strokeDasharray: String(CIRCUMFERENCE),
     strokeDashoffset: String(offset),
-    transition: 'stroke-dashoffset 1.2s cubic-bezier(0.4, 0, 0.2, 1) 0.3s'
+    transition: 'stroke-dashoffset 1.2s cubic-bezier(0.4, 0, 0.2, 1) 0.3s',
   }
 }
 
@@ -166,13 +164,13 @@ const insuranceTypeMap: Record<InsuranceType, string> = {
   cancer: '癌症險',
   accident: '意外險',
   longterm_care: '長照險',
-  critical: '重大疾病險'
+  critical: '重大疾病險',
 }
 
 const criteriaText = computed<string>(() => {
   const types = props.criteria?.insuranceTypes
   if (!types) return ''
-  const labels = types.map(t => insuranceTypeMap[t] ?? t).join('、')
+  const labels = types.map((t) => insuranceTypeMap[t] ?? t).join('、')
   return `月繳 NT$${props.criteria?.budget?.toLocaleString() ?? ''} · ${labels}`
 })
 </script>
@@ -202,7 +200,7 @@ const criteriaText = computed<string>(() => {
   padding: 24px;
   border-radius: 16px;
   background: #f4fbf7;
-  border: 1px solid #E5E5E5;
+  border: 1px solid #e5e5e5;
   animation: pulse 1.5s ease-in-out infinite;
 }
 
@@ -210,7 +208,7 @@ const criteriaText = computed<string>(() => {
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background: #E5E5E5;
+  background: #e5e5e5;
   flex-shrink: 0;
 }
 
@@ -224,24 +222,35 @@ const criteriaText = computed<string>(() => {
 .skeleton-line {
   height: 12px;
   border-radius: 6px;
-  background: #E5E5E5;
+  background: #e5e5e5;
 }
 
-.skeleton-line.wide { width: 60%; }
-.skeleton-line.medium { width: 40%; }
-.skeleton-line.short { width: 25%; }
+.skeleton-line.wide {
+  width: 60%;
+}
+.skeleton-line.medium {
+  width: 40%;
+}
+.skeleton-line.short {
+  width: 25%;
+}
 
 .skeleton-score {
   width: 64px;
   height: 64px;
   border-radius: 50%;
-  background: #E5E5E5;
+  background: #e5e5e5;
   flex-shrink: 0;
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
 }
 
 .loading-label {
@@ -301,11 +310,11 @@ const criteriaText = computed<string>(() => {
   gap: 8px;
   font-size: 16px;
   font-weight: 700;
-  color: #007A3D;
+  color: #007a3d;
 }
 
 .gold-icon {
-  color: #05994D;
+  color: #05994d;
 }
 
 .results-meta {
@@ -327,8 +336,8 @@ const criteriaText = computed<string>(() => {
   grid-template-rows: auto auto;
   gap: 0;
   border-radius: 16px;
-  border: 2px solid #E5E5E5;
-  background: #FFFFFF;
+  border: 2px solid #e5e5e5;
+  background: #ffffff;
   overflow: hidden;
   padding: 20px 20px 0 20px;
   animation: slideUp 0.5s ease forwards;
@@ -336,17 +345,33 @@ const criteriaText = computed<string>(() => {
   transform: translateY(12px);
 }
 
-.result-card:nth-child(1) { animation-delay: 0.05s; }
-.result-card:nth-child(2) { animation-delay: 0.15s; }
-.result-card:nth-child(3) { animation-delay: 0.25s; }
-
-@keyframes slideUp {
-  to { opacity: 1; transform: translateY(0); }
+.result-card:nth-child(1) {
+  animation-delay: 0.05s;
+}
+.result-card:nth-child(2) {
+  animation-delay: 0.15s;
+}
+.result-card:nth-child(3) {
+  animation-delay: 0.25s;
 }
 
-.result-card.rank-1 { border-color: #007A3D; box-shadow: 0 4px 20px rgba(5,153,77,0.18); }
-.result-card.rank-2 { border-color: #05994D; }
-.result-card.rank-3 { border-color: #E5E5E5; }
+@keyframes slideUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.result-card.rank-1 {
+  border-color: #007a3d;
+  box-shadow: 0 4px 20px rgba(5, 153, 77, 0.18);
+}
+.result-card.rank-2 {
+  border-color: #05994d;
+}
+.result-card.rank-3 {
+  border-color: #e5e5e5;
+}
 
 /* Rank badge */
 .rank-badge {
@@ -361,9 +386,15 @@ const criteriaText = computed<string>(() => {
   justify-content: center;
 }
 
-.badge-1 { background: linear-gradient(180deg, #007A3D, #005a2d); }
-.badge-2 { background: linear-gradient(180deg, #05994D, #007A3D); }
-.badge-3 { background: linear-gradient(180deg, #3dba75, #05994D); }
+.badge-1 {
+  background: linear-gradient(180deg, #007a3d, #005a2d);
+}
+.badge-2 {
+  background: linear-gradient(180deg, #05994d, #007a3d);
+}
+.badge-3 {
+  background: linear-gradient(180deg, #3dba75, #05994d);
+}
 
 .rank-num {
   font-size: 15px;
@@ -392,7 +423,7 @@ const criteriaText = computed<string>(() => {
 .plan-company {
   font-size: 11px;
   font-weight: 600;
-  color: #05994D;
+  color: #05994d;
   letter-spacing: 0.5px;
   text-transform: uppercase;
 }
@@ -406,7 +437,7 @@ const criteriaText = computed<string>(() => {
 .plan-tag {
   font-size: 10px;
   padding: 2px 8px;
-  background: #E8F5EE;
+  background: #e8f5ee;
   color: #333333;
   border-radius: 999px;
   font-weight: 500;
@@ -415,7 +446,7 @@ const criteriaText = computed<string>(() => {
 .plan-name {
   font-size: 17px;
   font-weight: 700;
-  color: #007A3D;
+  color: #007a3d;
   font-family: 'Noto Serif TC', serif;
   line-height: 1.3;
 }
@@ -456,13 +487,13 @@ const criteriaText = computed<string>(() => {
 .price-value {
   font-size: 20px;
   font-weight: 700;
-  color: #007A3D;
+  color: #007a3d;
 }
 
 .plan-period {
   font-size: 12px;
   color: #888888;
-  border-left: 1px solid #E5E5E5;
+  border-left: 1px solid #e5e5e5;
   padding-left: 16px;
 }
 
@@ -489,12 +520,18 @@ const criteriaText = computed<string>(() => {
 }
 
 .ring-bg {
-  stroke: #E5E5E5;
+  stroke: #e5e5e5;
 }
 
-.ring-1 { stroke: #007A3D; }
-.ring-2 { stroke: #05994D; }
-.ring-3 { stroke: #3dba75; }
+.ring-1 {
+  stroke: #007a3d;
+}
+.ring-2 {
+  stroke: #05994d;
+}
+.ring-3 {
+  stroke: #3dba75;
+}
 
 .score-inner {
   position: absolute;
@@ -508,7 +545,7 @@ const criteriaText = computed<string>(() => {
 .score-num {
   font-size: 16px;
   font-weight: 800;
-  color: #007A3D;
+  color: #007a3d;
   line-height: 1;
 }
 
@@ -547,7 +584,7 @@ const criteriaText = computed<string>(() => {
 
 .dim-bar-wrap {
   height: 3px;
-  background: #E8F5EE;
+  background: #e8f5ee;
   border-radius: 999px;
   overflow: hidden;
 }
@@ -558,9 +595,15 @@ const criteriaText = computed<string>(() => {
   transition: width 1s cubic-bezier(0.4, 0, 0.2, 1) 0.5s;
 }
 
-.dim-bar-1 { background: #007A3D; }
-.dim-bar-2 { background: #05994D; }
-.dim-bar-3 { background: #3dba75; }
+.dim-bar-1 {
+  background: #007a3d;
+}
+.dim-bar-2 {
+  background: #05994d;
+}
+.dim-bar-3 {
+  background: #3dba75;
+}
 
 /* AI Reason */
 .ai-reason {
@@ -572,14 +615,14 @@ const criteriaText = computed<string>(() => {
   padding: 12px 16px;
   margin: 12px -20px 0 -20px;
   background: #f4fbf7;
-  border-top: 1px solid #E5E5E5;
+  border-top: 1px solid #e5e5e5;
   font-size: 12px;
   color: #333333;
   line-height: 1.5;
 }
 
 .ai-icon {
-  color: #05994D;
+  color: #05994d;
   flex-shrink: 0;
   margin-top: 1px;
 }
