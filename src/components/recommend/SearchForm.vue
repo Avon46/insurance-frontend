@@ -78,7 +78,7 @@
         </div>
 
         <!-- 保障年期 -->
-        <div class="form-group">
+        <div class="form-group full-width">
           <div class="field-label">
             <q-icon name="schedule" size="16px" class="label-icon" />
             希望保障年期
@@ -128,12 +128,12 @@
     <q-separator />
 
     <q-card-section class="form-footer">
-      <div class="form-summary" v-if="summaryText">
+      <!-- <div class="form-summary" v-if="summaryText">
         <q-icon name="info" size="14px" />
         {{ summaryText }}
-      </div>
+      </div> -->
       <q-btn
-        class="search-btn"
+        class="search-btn full-width"
         unelevated
         :loading="loading"
         :disable="!isFormValid"
@@ -150,7 +150,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import type {
   SearchFormProps,
   SearchFormEmits,
@@ -176,7 +176,7 @@ const form = ref<SearchCriteria>({
 })
 
 const segments: SegmentOption[] = [
-  { value: 'young_adult', label: '青年族群', desc: '18-30 歲', icon: 'directions_run' },
+  { value: 'young_adult', label: '青年族群', desc: '18-34 歲', icon: 'directions_run' },
   { value: 'middle_aged', label: '中年族群', desc: '35–55 歲', icon: 'person' },
   { value: 'senior', label: '銀髮族群', desc: '55 歲以上', icon: 'elderly' },
 ]
@@ -205,6 +205,27 @@ const toggleType = (val: InsuranceType): void => {
     form.value.insuranceTypes.push(val)
   }
 }
+
+// 依年齡自動判斷身分族群
+// 18-30 歲：青年族群／35-55 歲：中年族群／55 歲以上：銀髮族群
+// 31-34 歲為區間外空隙，暫歸入中年族群，可依需求調整
+const matchSegmentByAge = (age: number): SearchCriteria['segment'] | null => {
+  if (age >= 18 && age <= 34) return 'young_adult'
+  if (age >= 35 && age <= 55) return 'middle_aged'
+  if (age > 55) return 'senior'
+  return null // 小於 18 歲，不自動切換，保留使用者目前選擇
+}
+
+watch(
+  () => form.value.age,
+  (newAge) => {
+    if (newAge === null || newAge === undefined || newAge <= 0) return
+    const matched = matchSegmentByAge(newAge)
+    if (matched) {
+      form.value.segment = matched
+    }
+  },
+)
 
 const isFormValid = computed<boolean>(() => form.value.insuranceTypes.length > 0)
 
