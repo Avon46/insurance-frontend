@@ -6,33 +6,33 @@ export interface InsurancePlanOption {
   id: number
   name: string
   category: PlanCategory
-  base_premium: number
-  max_coverage: number
-  min_age: number
-  max_age: number
+  basePremium: number
+  maxCoverage: number
+  minAge: number
+  maxAge: number
 }
 
 export interface PremiumCalculationRequest {
-  plan_id: number
+  planId: number
   age: number
   gender: Gender
-  risk_level: RiskLevel
+  riskLevel: RiskLevel
 }
 
 export interface PremiumCalculationResponse {
-  plan_id: number
-  plan_name: string
-  base_premium: number
+  planId: number
+  planName: string
+  basePremium: number
   age: number
-  age_coefficient: number
-  risk_level: RiskLevel
-  risk_coefficient: number
-  estimated_premium: number
+  ageCoefficient: number
+  riskLevel: RiskLevel
+  riskCoefficient: number
+  estimatedPremium: number
 }
 
 export interface ApiErrorResponse {
   success: false
   message: string
-  error_code: string
+  errorCode: string
   timestamp: string
 }
