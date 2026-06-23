@@ -40,6 +40,19 @@ function logout() {
           {{ isAdmin ? '後台管理系統' : '' }}
         </q-toolbar-title>
 
+        <!-- 身分提示 highlight（僅後台顯示） -->
+        <q-chip
+          v-if="isAdmin"
+          dense
+          square
+          color="amber-8"
+          text-color="white"
+          icon="admin_panel_settings"
+          class="admin-badge q-mr-sm"
+        >
+          管理員身分
+        </q-chip>
+
         <!-- 登出（僅後台顯示） -->
         <q-btn
           v-if="isAdmin"
@@ -64,7 +77,37 @@ function logout() {
     </q-drawer>
 
     <q-page-container class="bg-grey-1">
+      <!-- 身分提示 highlight 橫幅：提醒目前處於管理員操作介面 -->
+      <q-banner v-if="isAdmin" dense class="admin-identity-banner">
+        <template #avatar>
+          <q-icon name="verified_user" color="white" />
+        </template>
+        您目前正以 <strong>管理員</strong> 身分操作後台 —— 所有保單異動將即時寫入資料庫，請謹慎操作。
+      </q-banner>
+
       <router-view />
     </q-page-container>
   </q-layout>
 </template>
+
+<style scoped>
+.admin-badge {
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.admin-identity-banner {
+  background: linear-gradient(90deg, #b8860b, #d9a406);
+  color: #fff;
+  font-size: 13.5px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.admin-identity-banner strong {
+  font-weight: 800;
+}
+
+.admin-identity-banner :deep(.q-banner__avatar) {
+  align-self: center;
+}
+</style>
