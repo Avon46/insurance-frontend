@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/multi-word-component-names -->
 <script setup lang="ts">
 import { computed } from 'vue'
 import type { PlanCategory, InsurancePlanOption, PremiumCalculationResponse } from '@/types/premium'
@@ -70,8 +71,7 @@ const insightText = computed(() => {
     <div class="result-col__header">
       <h2 class="result-col__title">
         <svg class="result-col__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path
-            d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M18.4 5.6l-2.8 2.8M8.4 15.6l-2.8 2.8"
+          <path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M18.4 5.6l-2.8 2.8M8.4 15.6l-2.8 2.8"
             stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
         </svg>
         試算結果
@@ -197,8 +197,7 @@ const insightText = computed(() => {
 
           <p class="insight-strip">
             <svg class="insight-strip__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path
-                d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3 11c.6.4 1 1 1 1.7V17h4v-1.3c0-.7.4-1.3 1-1.7a6 6 0 0 0-3-11Z"
+              <path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3 11c.6.4 1 1 1 1.7V17h4v-1.3c0-.7.4-1.3 1-1.7a6 6 0 0 0-3-11Z"
                 stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" />
             </svg>
             {{ insightText }}

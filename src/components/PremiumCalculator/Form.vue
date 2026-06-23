@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/multi-word-component-names -->
 <script setup lang="ts">
 import type { RiskLevel, PlanCategory, InsurancePlanOption } from '@/types/premium'
 
