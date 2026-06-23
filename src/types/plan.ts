@@ -21,7 +21,6 @@ export interface InsurancePlan {
   minAge: number | null
   maxAge: number | null
   status: PlanStatus | null
-  sortOrder: number | null
   createdAt: string
   updatedAt: string
 }
@@ -39,7 +38,6 @@ export interface PlanRequest {
   minAge: number | null
   maxAge: number | null
   status: PlanStatus
-  sortOrder: number | null
 }
 
 /** 表單送出模式：決定父元件呼叫 create 還是 update */

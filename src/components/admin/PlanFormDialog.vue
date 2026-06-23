@@ -58,7 +58,6 @@ function emptyForm(): PlanRequest {
     minAge: null,
     maxAge: null,
     status: 'ACTIVE',
-    sortOrder: null,
   }
 }
 
@@ -80,7 +79,6 @@ watch(
         minAge: p.minAge,
         maxAge: p.maxAge,
         status: p.status ?? 'ACTIVE',
-        sortOrder: p.sortOrder,
       }
     } else {
       form.value = emptyForm()
@@ -215,14 +213,6 @@ function close() {
               dense
               class="col-12 col-sm-4"
               :rules="[nonNegative]"
-            />
-            <q-input
-              v-model.number="form.sortOrder"
-              label="排序"
-              type="number"
-              outlined
-              dense
-              class="col-12 col-sm-4"
             />
           </div>
         </q-form>
