@@ -39,13 +39,8 @@
       </div>
 
       <div class="result-cards">
-        <div
-          v-for="(plan, index) in results"
-          :key="plan.id"
-          class="result-card"
-          :class="[`rank-${index + 1}`, { revealed: plan.revealed }]"
-          @animationend="plan.revealed = true"
-        >
+        <div v-for="(plan, index) in results" :key="plan.id" class="result-card"
+          :class="[`rank-${index + 1}`, { revealed: plan.revealed }]" @animationend="plan.revealed = true">
           <!-- Rank Badge -->
           <div class="rank-badge" :class="`badge-${index + 1}`">
             <span class="rank-num">{{ index + 1 }}</span>
@@ -83,38 +78,21 @@
             <div class="score-ring-wrap">
               <svg class="score-ring" viewBox="0 0 64 64" width="64" height="64">
                 <circle class="ring-bg" cx="32" cy="32" r="26" fill="none" stroke-width="6" />
-                <circle
-                  class="ring-fill"
-                  :class="`ring-${index + 1}`"
-                  cx="32"
-                  cy="32"
-                  r="26"
-                  fill="none"
-                  stroke-width="6"
-                  stroke-linecap="round"
-                  :style="ringStyle(plan.matchingScore)"
-                />
+                <circle class="ring-fill" :class="`ring-${index + 1}`" cx="32" cy="32" r="26" fill="none"
+                  stroke-width="6" stroke-linecap="round" :style="ringStyle(plan.matchingScore)" />
               </svg>
               <div class="score-inner">
                 <span class="score-num">{{ plan.matchingScore }}</span>
-                <span class="score-pct">%</span>
+                <!-- <span class="score-pct">%</span> -->
               </div>
             </div>
             <div class="score-label">匹配度</div>
             <div class="score-breakdown">
-              <div
-                v-for="dim in plan.scoreBreakdown"
-                :key="dim.label"
-                class="dim-row"
-                :title="`${dim.label}: ${dim.score}分`"
-              >
+              <div v-for="dim in plan.scoreBreakdown" :key="dim.label" class="dim-row"
+                :title="`${dim.label}: ${dim.score}分`">
                 <span class="dim-label">{{ dim.label }}</span>
                 <div class="dim-bar-wrap">
-                  <div
-                    class="dim-bar"
-                    :style="{ width: dim.score + '%' }"
-                    :class="`dim-bar-${index + 1}`"
-                  ></div>
+                  <div class="dim-bar" :style="{ width: dim.score + '%' }" :class="`dim-bar-${index + 1}`"></div>
                 </div>
               </div>
             </div>
@@ -124,13 +102,8 @@
           <div class="ai-reason">
             <q-icon name="psychology" size="14px" class="ai-icon" />
             <span class="ai-reason__text">{{ plan.aiReason }}</span>
-            <q-btn
-              flat no-caps unelevated size="sm"
-              class="calc-btn"
-              icon-right="arrow_forward"
-              label="前往試算"
-              @click="goToCalculator(plan.id)"
-            />
+            <q-btn flat no-caps unelevated size="sm" class="calc-btn" icon-right="arrow_forward" label="前往試算"
+              @click="goToCalculator(plan.id)" />
           </div>
         </div>
       </div>
@@ -248,9 +221,11 @@ const criteriaText = computed<string>(() => {
 .skeleton-line.wide {
   width: 60%;
 }
+
 .skeleton-line.medium {
   width: 40%;
 }
+
 .skeleton-line.short {
   width: 25%;
 }
@@ -264,10 +239,12 @@ const criteriaText = computed<string>(() => {
 }
 
 @keyframes pulse {
+
   0%,
   100% {
     opacity: 1;
   }
+
   50% {
     opacity: 0.5;
   }
@@ -368,9 +345,11 @@ const criteriaText = computed<string>(() => {
 .result-card:nth-child(1) {
   animation-delay: 0.05s;
 }
+
 .result-card:nth-child(2) {
   animation-delay: 0.15s;
 }
+
 .result-card:nth-child(3) {
   animation-delay: 0.25s;
 }
@@ -386,9 +365,11 @@ const criteriaText = computed<string>(() => {
   border-color: #007a3d;
   box-shadow: 0 4px 20px rgba(5, 153, 77, 0.18);
 }
+
 .result-card.rank-2 {
   border-color: #05994d;
 }
+
 .result-card.rank-3 {
   border-color: #e5e5e5;
 }
@@ -409,9 +390,11 @@ const criteriaText = computed<string>(() => {
 .badge-1 {
   background: linear-gradient(180deg, #007a3d, #005a2d);
 }
+
 .badge-2 {
   background: linear-gradient(180deg, #05994d, #007a3d);
 }
+
 .badge-3 {
   background: linear-gradient(180deg, #3dba75, #05994d);
 }
@@ -546,9 +529,11 @@ const criteriaText = computed<string>(() => {
 .ring-1 {
   stroke: #007a3d;
 }
+
 .ring-2 {
   stroke: #05994d;
 }
+
 .ring-3 {
   stroke: #3dba75;
 }
@@ -618,9 +603,11 @@ const criteriaText = computed<string>(() => {
 .dim-bar-1 {
   background: #007a3d;
 }
+
 .dim-bar-2 {
   background: #05994d;
 }
+
 .dim-bar-3 {
   background: #3dba75;
 }
@@ -678,6 +665,7 @@ const criteriaText = computed<string>(() => {
     grid-template-columns: 1fr;
     padding: 16px;
   }
+
   .score-section {
     grid-column: 1;
     grid-row: 2;
@@ -688,13 +676,16 @@ const criteriaText = computed<string>(() => {
     padding-bottom: 4px;
     gap: 12px;
   }
+
   .score-breakdown {
     flex-direction: row;
     gap: 8px;
   }
+
   .dim-bar-wrap {
     width: 40px;
   }
+
   .ai-reason {
     grid-row: 3;
     margin: 0 -16px;
