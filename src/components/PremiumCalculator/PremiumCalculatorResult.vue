@@ -28,7 +28,6 @@ const props = defineProps<{
   errorMessage: string
   errorCode: string
   selectedPlan: InsurancePlanOption | undefined
-  genderLabel: string
   riskLevelLabel: string
 }>()
 
@@ -78,7 +77,7 @@ const insightText = computed(() => {
         試算結果
       </h2>
       <p v-if="result" class="result-col__meta">
-        試算依據：{{ result.age }} 歲・{{ genderLabel }}・{{ riskLevelLabel }}
+        試算依據：{{ result.age }} 歲・{{ riskLevelLabel }}
       </p>
     </div>
 

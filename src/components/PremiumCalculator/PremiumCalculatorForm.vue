@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Gender, RiskLevel, PlanCategory, InsurancePlanOption } from '@/types/premium'
+import type { RiskLevel, PlanCategory, InsurancePlanOption } from '@/types/premium'
 
 const planCategories = ['MEDICAL', 'ACCIDENT', 'LIFE'] as const
 
@@ -20,7 +20,6 @@ defineProps<{
   isLoadingPlans: boolean
   planId: number
   age: number
-  gender: Gender
   riskLevel: RiskLevel
   selectedPlan: InsurancePlanOption | undefined
   isLoading: boolean
@@ -29,7 +28,6 @@ defineProps<{
 const emit = defineEmits<{
   'update:planId': [value: number]
   'update:age': [value: number]
-  'update:gender': [value: Gender]
   'update:riskLevel': [value: RiskLevel]
   'submit': []
 }>()
@@ -85,22 +83,6 @@ const emit = defineEmits<{
         <div class="slider__bounds">
           <span>{{ selectedPlan?.minAge ?? 0 }} 歲</span>
           <span>{{ selectedPlan?.maxAge ?? 100 }} 歲</span>
-        </div>
-      </section>
-
-      <!-- 性別 -->
-      <section class="field-group">
-        <h2 class="field-group__label">
-          <svg class="field-group__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <circle cx="12" cy="8" r="3.4" stroke="currentColor" stroke-width="1.6" />
-            <path d="M5 20c0-3.6 3-6 7-6s7 2.4 7 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
-          </svg>
-          性別
-        </h2>
-        <div class="btn-group gender-toggle full-width">
-          <q-btn v-for="opt in [{ label: '男', value: 'M' }, { label: '女', value: 'F' }]" :key="opt.value" flat no-caps
-            :label="opt.label" :class="{ 'tgl-active': gender === opt.value }"
-            @click="emit('update:gender', opt.value as Gender)" />
         </div>
       </section>
 
@@ -261,7 +243,6 @@ const emit = defineEmits<{
   gap: 10px;
 }
 
-:deep(.gender-toggle .q-btn),
 :deep(.risk-toggle .q-btn) {
   flex: 1;
   border-radius: var(--radius-sm) !important;
@@ -271,7 +252,6 @@ const emit = defineEmits<{
   font-weight: 700;
 }
 
-:deep(.gender-toggle .q-btn.tgl-active),
 :deep(.risk-toggle .q-btn.tgl-active) {
   border-color: var(--primary-color) !important;
   background: var(--light-green) !important;

@@ -120,10 +120,17 @@
             </div>
           </div>
 
-          <!-- AI Reason -->
+          <!-- AI Reason + CTA -->
           <div class="ai-reason">
             <q-icon name="psychology" size="14px" class="ai-icon" />
-            <span>{{ plan.aiReason }}</span>
+            <span class="ai-reason__text">{{ plan.aiReason }}</span>
+            <q-btn
+              flat no-caps unelevated size="sm"
+              class="calc-btn"
+              icon-right="arrow_forward"
+              label="前往試算"
+              @click="goToCalculator(plan.id)"
+            />
           </div>
         </div>
       </div>
@@ -139,6 +146,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useRouter } from 'vue-router'
 import type { RecommendResultProps, InsuranceType } from '@/types/types'
 
 const props = withDefaults(defineProps<RecommendResultProps>(), {
@@ -146,6 +154,18 @@ const props = withDefaults(defineProps<RecommendResultProps>(), {
   loading: false,
   criteria: () => ({}),
 })
+
+const router = useRouter()
+
+function goToCalculator(planId: string) {
+  router.push({
+    name: 'premium-calculator',
+    query: {
+      planId,
+      ...(props.criteria?.age ? { age: props.criteria.age } : {}),
+    },
+  })
+}
 
 const CIRCUMFERENCE = 2 * Math.PI * 26 // ~163.4
 
@@ -610,15 +630,30 @@ const criteriaText = computed<string>(() => {
   grid-column: 1 / -1;
   grid-row: 2;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 6px;
-  padding: 12px 16px;
+  padding: 10px 16px;
   margin: 12px -20px 0 -20px;
   background: #f4fbf7;
   border-top: 1px solid #e5e5e5;
   font-size: 12px;
   color: #333333;
   line-height: 1.5;
+}
+
+.ai-reason__text {
+  flex: 1;
+}
+
+.calc-btn {
+  flex-shrink: 0;
+  color: #007a3d !important;
+  font-weight: 600 !important;
+  font-size: 12px !important;
+  border: 1px solid #007a3d !important;
+  border-radius: 6px !important;
+  padding: 4px 10px !important;
+  white-space: nowrap;
 }
 
 .ai-icon {

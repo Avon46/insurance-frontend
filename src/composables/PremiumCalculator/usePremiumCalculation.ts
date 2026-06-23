@@ -2,12 +2,11 @@ import { ref } from 'vue'
 import type { Ref } from 'vue'
 import axios from 'axios'
 import { calculatePremium } from '@/services/premiumService'
-import type { Gender, RiskLevel, PremiumCalculationResponse, ApiErrorResponse } from '@/types/premium'
+import type { RiskLevel, PremiumCalculationResponse, ApiErrorResponse } from '@/types/premium'
 
 interface FormRefs {
   planId:    Ref<number>
   age:       Ref<number>
-  gender:    Ref<Gender>
   riskLevel: Ref<RiskLevel>
 }
 
@@ -15,7 +14,7 @@ interface FormRefs {
  * 負責呼叫試算 API 並管理結果狀態。
  * 接收表單 Ref，讓表單與試算邏輯各自獨立。
  */
-export function usePremiumCalculation({ planId, age, gender, riskLevel }: FormRefs) {
+export function usePremiumCalculation({ planId, age, riskLevel }: FormRefs) {
   const isLoading    = ref(false)
   const result       = ref<PremiumCalculationResponse | null>(null)
   const errorMessage = ref('')
@@ -31,7 +30,6 @@ export function usePremiumCalculation({ planId, age, gender, riskLevel }: FormRe
       result.value = await calculatePremium({
         planId:    planId.value,
         age:       age.value,
-        gender:    gender.value,
         riskLevel: riskLevel.value,
       })
     } catch (err) {

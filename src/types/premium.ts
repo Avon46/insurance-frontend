@@ -1,4 +1,3 @@
-export type Gender       = 'M' | 'F'
 export type RiskLevel    = 'LOW' | 'MEDIUM' | 'HIGH'
 export type PlanCategory = 'MEDICAL' | 'ACCIDENT' | 'LIFE'
 
@@ -15,7 +14,6 @@ export interface InsurancePlanOption {
 export interface PremiumCalculationRequest {
   planId:    number
   age:       number
-  gender:    Gender
   riskLevel: RiskLevel
 }
 

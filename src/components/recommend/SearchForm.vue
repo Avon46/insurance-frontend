@@ -229,14 +229,14 @@ watch(
 
 const isFormValid = computed<boolean>(() => form.value.insuranceTypes.length > 0)
 
-const summaryText = computed<string>(() => {
+/*const summaryText = computed<string>(() => {
   if (!isFormValid.value) return ''
   const seg = segments.find((s) => s.value === form.value.segment)?.label
   const types = form.value.insuranceTypes
     .map((t) => insuranceTypes.find((i) => i.value === t)?.label)
     .join('、')
   return `${seg} · 月繳 NT$${form.value.budget.toLocaleString()} · ${types}`
-})
+})*/
 
 const onSubmit = (): void => {
   emit('search', { ...form.value })

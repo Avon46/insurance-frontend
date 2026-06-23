@@ -1,6 +1,6 @@
 import { ref, computed, watch } from 'vue'
 import type { Ref } from 'vue'
-import type { Gender, RiskLevel, InsurancePlanOption } from '@/types/premium'
+import type { RiskLevel, InsurancePlanOption } from '@/types/premium'
 
 const riskLevelOptions = [
   { value: 'LOW'    as RiskLevel, shortLabel: '低風險' },
@@ -10,8 +10,8 @@ const riskLevelOptions = [
 
 /**
  * 管理試算表單的所有狀態：
- * - planId / age / gender / riskLevel
- * - selectedPlan / genderLabel / riskLevelLabel（derived）
+ * - planId / age / riskLevel
+ * - selectedPlan / riskLevelLabel（derived）
  * - 切換方案時自動夾年齡在承保範圍
  * - initFromFirstPlan()：載入完成後設預設值
  *
@@ -20,14 +20,11 @@ const riskLevelOptions = [
 export function usePremiumForm(plans: Ref<InsurancePlanOption[]>) {
   const planId    = ref<number>(0)
   const age       = ref<number>(30)
-  const gender    = ref<Gender>('M')
   const riskLevel = ref<RiskLevel>('LOW')
 
   const selectedPlan = computed(() =>
     plans.value.find((p) => p.id === planId.value),
   )
-
-  const genderLabel = computed(() => (gender.value === 'M' ? '男' : '女'))
 
   const riskLevelLabel = computed(
     () => riskLevelOptions.find((o) => o.value === riskLevel.value)?.shortLabel ?? '',
@@ -50,10 +47,8 @@ export function usePremiumForm(plans: Ref<InsurancePlanOption[]>) {
   return {
     planId,
     age,
-    gender,
     riskLevel,
     selectedPlan,
-    genderLabel,
     riskLevelLabel,
     initFromFirstPlan,
   }

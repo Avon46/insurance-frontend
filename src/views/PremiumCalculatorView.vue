@@ -1,28 +1,39 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
+import { useRoute } from 'vue-router'
 import { usePremiumPlans }       from '@/composables/PremiumCalculator/usePremiumPlans'
 import { usePremiumForm }        from '@/composables/PremiumCalculator/usePremiumForm'
 import { usePremiumCalculation } from '@/composables/PremiumCalculator/usePremiumCalculation'
 import PremiumCalculatorForm     from '@/components/PremiumCalculator/PremiumCalculatorForm.vue'
 import PremiumCalculatorResult   from '@/components/PremiumCalculator/PremiumCalculatorResult.vue'
 
+const route = useRoute()
 const { plans, isLoadingPlans, loadPlans } = usePremiumPlans()
 
 const {
-  planId, age, gender, riskLevel,
-  selectedPlan, genderLabel, riskLevelLabel,
+  planId, age, riskLevel,
+  selectedPlan, riskLevelLabel,
   initFromFirstPlan,
 } = usePremiumForm(plans)
 
 const {
   isLoading, result, errorMessage, errorCode,
   handleSubmit, dismissError,
-} = usePremiumCalculation({ planId, age, gender, riskLevel })
+} = usePremiumCalculation({ planId, age, riskLevel })
 
 onMounted(async () => {
   const { firstPlan, error } = await loadPlans()
-  if (error)      errorMessage.value = error
-  else if (firstPlan) initFromFirstPlan(firstPlan)
+  if (error) {
+    errorMessage.value = error
+    return
+  }
+  if (firstPlan) initFromFirstPlan(firstPlan)
+
+  // 從推薦頁跳轉時，以 query params 覆蓋預設值
+  const qPlanId = Number(route.query.planId)
+  const qAge    = Number(route.query.age)
+  if (qPlanId && plans.value.some((p) => p.id === qPlanId)) planId.value = qPlanId
+  if (qAge > 0) age.value = qAge
 })
 </script>
 
@@ -36,13 +47,11 @@ onMounted(async () => {
           :is-loading-plans="isLoadingPlans"
           :plan-id="planId"
           :age="age"
-          :gender="gender"
           :risk-level="riskLevel"
           :selected-plan="selectedPlan"
           :is-loading="isLoading"
           @update:plan-id="planId = $event"
           @update:age="age = $event"
-          @update:gender="gender = $event"
           @update:risk-level="riskLevel = $event"
           @submit="handleSubmit"
         />
@@ -53,7 +62,6 @@ onMounted(async () => {
           :error-message="errorMessage"
           :error-code="errorCode"
           :selected-plan="selectedPlan"
-          :gender-label="genderLabel"
           :risk-level-label="riskLevelLabel"
           @dismiss-error="dismissError"
         />
