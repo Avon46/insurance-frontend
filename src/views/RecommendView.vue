@@ -2,19 +2,22 @@
   <q-page class="recommend-page">
     <div class="page-container">
       <!-- Page Header -->
-      <div class="page-header">
-      </div>
+      <div class="page-header"></div>
 
       <!-- Main Layout -->
       <div class="main-layout">
         <!-- Left: Search Form -->
         <div class="form-column">
-          <SearchForm :loading="loading" @search="handleSearch" />
+          <q-scroll-area style="height: 500px; width: 450px">
+            <SearchForm :loading="loading" @search="handleSearch" />
+          </q-scroll-area>
         </div>
 
         <!-- Right: Results -->
         <div class="result-column">
-          <RecommendResult :results="results" :loading="loading" :criteria="lastCriteria" />
+          <q-scroll-area style="height: 500px; width: 450px">
+            <RecommendResult :results="results" :loading="loading" :criteria="lastCriteria" />
+          </q-scroll-area>
         </div>
       </div>
     </div>
@@ -29,15 +32,9 @@ import RecommendResult from '@/components/recommend/RecommendResult.vue'
 
 import { recommendApi } from '@/services/recommendService'
 
-import type {
-  SearchCriteria,
-  RecommendedPlan
-} from '@/types/types'
+import type { SearchCriteria, RecommendedPlan } from '@/types/types'
 
-import type {
-  RecommendRequest,
-  RecommendResponse
-} from '@/types/recommend'
+import type { RecommendRequest, RecommendResponse } from '@/types/recommend'
 
 const loading = ref(false)
 const results = ref<RecommendedPlan[]>([])
@@ -82,12 +79,10 @@ function convertInsuranceTypes(types: string[]) {
     cancer: 'CANCER',
     accident: 'ACCIDENT',
     longterm_care: 'LONGTERM_CARE',
-    critical: 'CRITICAL'
+    critical: 'CRITICAL',
   }
 
-  return types
-    .map(type => mapping[type])
-    .filter((value): value is string => Boolean(value))
+  return types.map((type) => mapping[type]).filter((value): value is string => Boolean(value))
 }
 
 async function handleSearch(criteria: SearchCriteria) {
@@ -100,7 +95,7 @@ async function handleSearch(criteria: SearchCriteria) {
       age: criteria.age,
       schedule: convertCoveragePeriod(criteria.coveragePeriod),
       budgetLimit: criteria.budget,
-      primaryNeeds: convertInsuranceTypes(criteria.insuranceTypes)
+      primaryNeeds: convertInsuranceTypes(criteria.insuranceTypes),
     }
 
     const { data } = await recommendApi.recommend(request)
@@ -123,12 +118,12 @@ async function handleSearch(criteria: SearchCriteria) {
         scoreBreakdown: [
           { label: '年齡適配', score: item.ageScore },
           { label: '預算適配', score: item.budgetScore },
-          { label: '整體匹配', score: item.score }
+          { label: '整體匹配', score: item.score },
         ],
         aiReason: item.reason,
         revealed: false,
-        category: item.category
-      })
+        category: item.category,
+      }),
     )
   } catch (error) {
     console.error('推薦失敗', error)
@@ -141,7 +136,7 @@ async function handleSearch(criteria: SearchCriteria) {
 
 <style scoped>
 .recommend-page {
-  background: linear-gradient(160deg, #E8F5EE 0%, #f4fbf7 60%, #FFFFFF 100%);
+  background: linear-gradient(160deg, #e8f5ee 0%, #f4fbf7 60%, #ffffff 100%);
   min-height: 100vh;
   padding: 0 0 48px;
 }
@@ -162,12 +157,12 @@ async function handleSearch(criteria: SearchCriteria) {
   gap: 8px;
   font-size: 13px;
   font-weight: 600;
-  color: #007A3D;
+  color: #007a3d;
   letter-spacing: 0.5px;
   background: rgba(255, 255, 255, 0.8);
   padding: 6px 14px;
   border-radius: 999px;
-  border: 1px solid #E5E5E5;
+  border: 1px solid #e5e5e5;
 }
 
 .main-layout {

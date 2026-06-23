@@ -32,7 +32,7 @@
         </div>
 
         <!-- 年齡 -->
-        <div class="form-group">
+        <div class="form-group full-width">
           <div class="field-label">
             <q-icon name="cake" size="16px" class="label-icon" />
             年齡
@@ -54,26 +54,19 @@
         </div>
 
         <!-- 預算上限 -->
-        <div class="form-group">
+        <div class="form-group full-width">
           <div class="field-label">
             <q-icon name="account_balance_wallet" size="16px" class="label-icon" />
             月繳預算上限
           </div>
           <div class="budget-display">
-            NT$ <span class="budget-value">{{ form.budget.toLocaleString() }}</span>
-          </div>
-          <q-slider
-            v-model="form.budget"
-            :min="1000"
-            :max="300000"
-            :step="500"
-            color="primary"
-            track-color="blue-grey-2"
-            class="budget-slider"
-          />
-          <div class="slider-labels">
-            <span>NT$ 1000</span>
-            <span>NT$ 300,000</span>
+            <q-input
+              v-model="form.budget"
+              type="number"
+              outlined
+              dense
+              prefix="NT$"
+            ></q-input>
           </div>
         </div>
 
@@ -128,10 +121,6 @@
     <q-separator />
 
     <q-card-section class="form-footer">
-      <!-- <div class="form-summary" v-if="summaryText">
-        <q-icon name="info" size="14px" />
-        {{ summaryText }}
-      </div> -->
       <q-btn
         class="search-btn full-width"
         unelevated
