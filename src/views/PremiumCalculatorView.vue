@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import { usePremiumPlans }       from '@/composables/PremiumCalculator/usePremiumPlans'
-import { usePremiumForm }        from '@/composables/PremiumCalculator/usePremiumForm'
-import { usePremiumCalculation } from '@/composables/PremiumCalculator/usePremiumCalculation'
-import PremiumCalculatorForm     from '@/components/PremiumCalculator/PremiumCalculatorForm.vue'
-import PremiumCalculatorResult   from '@/components/PremiumCalculator/PremiumCalculatorResult.vue'
+import { usePremiumPlans }       from '@/composables/PremiumCalculator/usePlans'
+import { usePremiumForm }        from '@/composables/PremiumCalculator/useForm'
+import { usePremiumCalculation } from '@/composables/PremiumCalculator/useCalculation'
+import PremiumCalculatorForm     from '@/components/PremiumCalculator/Form.vue'
+import PremiumCalculatorResult   from '@/components/PremiumCalculator/Result.vue'
 
 const route = useRoute()
 const { plans, isLoadingPlans, loadPlans } = usePremiumPlans()
