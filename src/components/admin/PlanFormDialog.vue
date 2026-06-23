@@ -53,12 +53,12 @@ function emptyForm(): PlanRequest {
     name: '',
     category: 'MEDICAL',
     description: '',
-    base_premium: null,
-    max_coverage: null,
-    min_age: null,
-    max_age: null,
+    basePremium: null,
+    maxCoverage: null,
+    minAge: null,
+    maxAge: null,
     status: 'ACTIVE',
-    sort_order: null,
+    sortOrder: null,
   }
 }
 
@@ -75,12 +75,12 @@ watch(
         name: p.name,
         category: p.category,
         description: p.description ?? '',
-        base_premium: p.base_premium,
-        max_coverage: p.max_coverage,
-        min_age: p.min_age,
-        max_age: p.max_age,
+        basePremium: p.basePremium,
+        maxCoverage: p.maxCoverage,
+        minAge: p.minAge,
+        maxAge: p.maxAge,
         status: p.status ?? 'ACTIVE',
-        sort_order: p.sort_order,
+        sortOrder: p.sortOrder,
       }
     } else {
       form.value = emptyForm()
@@ -178,7 +178,7 @@ function close() {
 
           <div class="row q-col-gutter-md">
             <q-input
-              v-model.number="form.base_premium"
+              v-model.number="form.basePremium"
               label="基本保費 *"
               type="number"
               outlined
@@ -187,7 +187,7 @@ function close() {
               :rules="[required, nonNegative]"
             />
             <q-input
-              v-model.number="form.max_coverage"
+              v-model.number="form.maxCoverage"
               label="最高保障額度 *"
               type="number"
               outlined
@@ -199,7 +199,7 @@ function close() {
 
           <div class="row q-col-gutter-md">
             <q-input
-              v-model.number="form.min_age"
+              v-model.number="form.minAge"
               label="最低承保年齡"
               type="number"
               outlined
@@ -208,7 +208,7 @@ function close() {
               :rules="[nonNegative]"
             />
             <q-input
-              v-model.number="form.max_age"
+              v-model.number="form.maxAge"
               label="最高承保年齡"
               type="number"
               outlined
@@ -217,7 +217,7 @@ function close() {
               :rules="[nonNegative]"
             />
             <q-input
-              v-model.number="form.sort_order"
+              v-model.number="form.sortOrder"
               label="排序"
               type="number"
               outlined
