@@ -21,6 +21,7 @@ export interface InsurancePlan {
   minAge: number | null
   maxAge: number | null
   status: PlanStatus | null
+  coveragePeriod: string | null
   createdAt: string
   updatedAt: string
 }
@@ -38,6 +39,7 @@ export interface PlanRequest {
   minAge: number | null
   maxAge: number | null
   status: PlanStatus
+  coveragePeriod: string | null
 }
 
 /** 表單送出模式：決定父元件呼叫 create 還是 update */
@@ -63,3 +65,9 @@ export const STATUS_LABELS: Record<PlanStatus, string> = {
   ACTIVE: '上架',
   INACTIVE: '下架',
 }
+
+/**
+ * 保障年期選項。值即為資料庫實際儲存的字串，必須與推薦模組
+ * （RecommendView 的 convertCoveragePeriod 輸出）一致，否則配對不到。
+ */
+export const COVERAGE_PERIOD_OPTIONS = ['一年期', '十年期', '二十年期', '終身'] as const

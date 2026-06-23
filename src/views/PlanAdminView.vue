@@ -69,6 +69,14 @@ const columns: QTableColumn<InsurancePlan>[] = [
     sortable: true,
     format: (v: number) => v?.toLocaleString('zh-TW'),
   },
+  {
+    name: 'coveragePeriod',
+    label: '保障年期',
+    field: 'coveragePeriod',
+    align: 'center',
+    sortable: true,
+    format: (v: string | null) => v ?? '—',
+  },
   { name: 'status', label: '狀態', field: 'status', align: 'center', sortable: true },
   { name: 'actions', label: '操作', field: 'id', align: 'center' },
 ]

@@ -3,6 +3,7 @@ import { ref, watch } from 'vue'
 import type { QForm } from 'quasar'
 import {
   CATEGORY_LABELS,
+  COVERAGE_PERIOD_OPTIONS,
   STATUS_LABELS,
   type InsurancePlan,
   type PlanCategory,
@@ -46,6 +47,8 @@ const statusOptions = (Object.keys(STATUS_LABELS) as PlanStatus[]).map((value) =
   label: STATUS_LABELS[value],
 }))
 
+const coveragePeriodOptions = [...COVERAGE_PERIOD_OPTIONS]
+
 const formRef = ref<QForm | null>(null)
 
 function emptyForm(): PlanRequest {
@@ -58,6 +61,7 @@ function emptyForm(): PlanRequest {
     minAge: null,
     maxAge: null,
     status: 'ACTIVE',
+    coveragePeriod: null,
   }
 }
 
@@ -79,6 +83,7 @@ watch(
         minAge: p.minAge,
         maxAge: p.maxAge,
         status: p.status ?? 'ACTIVE',
+        coveragePeriod: p.coveragePeriod,
       }
     } else {
       form.value = emptyForm()
@@ -147,7 +152,7 @@ function close() {
               dense
               emit-value
               map-options
-              class="col-12 col-sm-6"
+              class="col-12 col-sm-4"
               :rules="[required]"
             />
             <q-select
@@ -158,7 +163,16 @@ function close() {
               dense
               emit-value
               map-options
-              class="col-12 col-sm-6"
+              class="col-12 col-sm-4"
+            />
+            <q-select
+              v-model="form.coveragePeriod"
+              :options="coveragePeriodOptions"
+              label="保障年期"
+              outlined
+              dense
+              clearable
+              class="col-12 col-sm-4"
             />
           </div>
 
