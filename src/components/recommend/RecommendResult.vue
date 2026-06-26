@@ -39,8 +39,13 @@
       </div>
 
       <div class="result-cards">
-        <div v-for="(plan, index) in results" :key="plan.id" class="result-card"
-          :class="[`rank-${index + 1}`, { revealed: plan.revealed }]" @animationend="plan.revealed = true">
+        <div
+          v-for="(plan, index) in results"
+          :key="plan.id"
+          class="result-card"
+          :class="[`rank-${index + 1}`, { revealed: plan.revealed }]"
+          @animationend="plan.revealed = true"
+        >
           <!-- Rank Badge -->
           <div class="rank-badge" :class="`badge-${index + 1}`">
             <span class="rank-num">{{ index + 1 }}</span>
@@ -58,18 +63,19 @@
               </div>
             </div>
             <div class="plan-name">{{ plan.name }}</div>
-            <div class="plan-coverage">
-              <div v-for="item in plan.coverageHighlights" :key="item" class="coverage-item">
-                <q-icon name="check_circle" size="14px" color="positive" />
-                {{ item }}
-              </div>
-            </div>
+
             <div class="plan-price-row">
               <div class="plan-price">
                 <span class="price-label">年繳</span>
                 <span class="price-value">NT$ {{ plan.basePremium.toLocaleString() }}</span>
               </div>
               <div class="plan-period">{{ plan.coveragePeriod }}</div>
+            </div>
+            <div class="plan-coverage">
+              <div v-for="item in plan.coverageHighlights" :key="item" class="coverage-item">
+                <q-icon name="check_circle" size="14px" color="positive" />
+                {{ item }}
+              </div>
             </div>
           </div>
 
@@ -78,8 +84,17 @@
             <div class="score-ring-wrap">
               <svg class="score-ring" viewBox="0 0 64 64" width="64" height="64">
                 <circle class="ring-bg" cx="32" cy="32" r="26" fill="none" stroke-width="6" />
-                <circle class="ring-fill" :class="`ring-${index + 1}`" cx="32" cy="32" r="26" fill="none"
-                  stroke-width="6" stroke-linecap="round" :style="ringStyle(plan.matchingScore)" />
+                <circle
+                  class="ring-fill"
+                  :class="`ring-${index + 1}`"
+                  cx="32"
+                  cy="32"
+                  r="26"
+                  fill="none"
+                  stroke-width="6"
+                  stroke-linecap="round"
+                  :style="ringStyle(plan.matchingScore)"
+                />
               </svg>
               <div class="score-inner">
                 <span class="score-num">{{ plan.matchingScore }}</span>
@@ -88,11 +103,19 @@
             </div>
             <div class="score-label">匹配度</div>
             <div class="score-breakdown">
-              <div v-for="dim in plan.scoreBreakdown" :key="dim.label" class="dim-row"
-                :title="`${dim.label}: ${dim.score}分`">
+              <div
+                v-for="dim in plan.scoreBreakdown"
+                :key="dim.label"
+                class="dim-row"
+                :title="`${dim.label}: ${dim.score}分`"
+              >
                 <span class="dim-label">{{ dim.label }}</span>
                 <div class="dim-bar-wrap">
-                  <div class="dim-bar" :style="{ width: dim.score + '%' }" :class="`dim-bar-${index + 1}`"></div>
+                  <div
+                    class="dim-bar"
+                    :style="{ width: `${(dim.score / 50) * 100}%` }"
+                    :class="`dim-bar-${index + 1}`"
+                  ></div>
                 </div>
               </div>
             </div>
@@ -102,8 +125,16 @@
           <div class="ai-reason">
             <q-icon name="psychology" size="14px" class="ai-icon" />
             <span class="ai-reason__text">{{ plan.aiReason }}</span>
-            <q-btn flat no-caps unelevated size="sm" class="calc-btn" icon-right="arrow_forward" label="前往試算"
-              @click="goToCalculator(plan.id)" />
+            <q-btn
+              flat
+              no-caps
+              unelevated
+              size="sm"
+              class="calc-btn"
+              icon-right="arrow_forward"
+              label="前往試算"
+              @click="goToCalculator(plan.id)"
+            />
           </div>
         </div>
       </div>
@@ -239,7 +270,6 @@ const criteriaText = computed<string>(() => {
 }
 
 @keyframes pulse {
-
   0%,
   100% {
     opacity: 1;
