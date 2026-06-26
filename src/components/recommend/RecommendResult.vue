@@ -66,7 +66,7 @@
             </div>
             <div class="plan-price-row">
               <div class="plan-price">
-                <span class="price-label">月繳</span>
+                <span class="price-label">年繳</span>
                 <span class="price-value">NT$ {{ plan.basePremium.toLocaleString() }}</span>
               </div>
               <div class="plan-period">{{ plan.coveragePeriod }}</div>

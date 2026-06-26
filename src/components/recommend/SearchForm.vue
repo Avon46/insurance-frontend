@@ -57,7 +57,7 @@
         <div class="form-group full-width">
           <div class="field-label">
             <q-icon name="account_balance_wallet" size="16px" class="label-icon" />
-            月繳預算上限
+            年繳預算上限
           </div>
           <div class="budget-display">
             <q-input
