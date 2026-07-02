@@ -17,13 +17,8 @@
             您的身份
           </div>
           <div class="segment-group">
-            <button
-              v-for="seg in segments"
-              :key="seg.value"
-              class="segment-btn"
-              :class="{ active: form.segment === seg.value }"
-              @click="form.segment = seg.value"
-            >
+            <button v-for="seg in segments" :key="seg.value" class="segment-btn"
+              :class="{ active: form.segment === seg.value }" @click="form.segment = seg.value">
               <q-icon :name="seg.icon" size="20px" />
               <span>{{ seg.label }}</span>
               <span class="seg-desc">{{ seg.desc }}</span>
@@ -38,18 +33,10 @@
             年齡
           </div>
 
-          <q-input
-            v-model.number="form.age"
-            type="number"
-            outlined
-            dense
-            placeholder="請輸入年齡"
-            :rules="[
-              (val) => (val !== null && val !== undefined) || '請輸入年齡',
-              (val) => (val > 0 && val <= 120) || '請輸入正確年齡',
-            ]"
-            class="age-input"
-          >
+          <q-input v-model.number="form.age" type="number" outlined dense placeholder="請輸入年齡" :rules="[
+            (val) => (val !== null && val !== undefined) || '請輸入年齡',
+            (val) => (val > 0 && val <= 120) || '請輸入正確年齡',
+          ]" class="age-input">
           </q-input>
         </div>
 
@@ -60,13 +47,7 @@
             年繳預算上限
           </div>
           <div class="budget-display">
-            <q-input
-              v-model="form.budget"
-              type="number"
-              outlined
-              dense
-              prefix="NT$"
-            ></q-input>
+            <q-input v-model="form.budget" type="number" outlined dense prefix="NT$"></q-input>
           </div>
         </div>
 
@@ -77,12 +58,8 @@
             希望保障年期
           </div>
           <div class="radio-group">
-            <label
-              v-for="opt in coveragePeriods"
-              :key="opt.value"
-              class="radio-card"
-              :class="{ active: form.coveragePeriod === opt.value }"
-            >
+            <label v-for="opt in coveragePeriods" :key="opt.value" class="radio-card"
+              :class="{ active: form.coveragePeriod === opt.value }">
               <input type="radio" v-model="form.coveragePeriod" :value="opt.value" hidden />
               <span class="radio-label">{{ opt.label }}</span>
             </label>
@@ -97,21 +74,12 @@
             <span class="hint">可複選</span>
           </div>
           <div class="insurance-types-grid">
-            <label
-              v-for="type in insuranceTypes"
-              :key="type.value"
-              class="type-chip"
-              :class="{ active: form.insuranceTypes.includes(type.value) }"
-              @click="toggleType(type.value)"
-            >
+            <label v-for="type in insuranceTypes" :key="type.value" class="type-chip"
+              :class="{ active: form.insuranceTypes.includes(type.value) }" @click="toggleType(type.value)">
               <q-icon :name="type.icon" size="18px" />
               <span>{{ type.label }}</span>
-              <q-icon
-                v-if="form.insuranceTypes.includes(type.value)"
-                name="check_circle"
-                size="14px"
-                class="check-icon"
-              />
+              <q-icon v-if="form.insuranceTypes.includes(type.value)" name="check_circle" size="14px"
+                class="check-icon" />
             </label>
           </div>
         </div>
@@ -121,15 +89,9 @@
     <q-separator />
 
     <q-card-section class="form-footer">
-      <q-btn
-        class="search-btn full-width"
-        unelevated
-        :loading="loading"
-        :disable="!isFormValid"
-        @click="onSubmit"
-      >
+      <q-btn class="search-btn full-width" unelevated :loading="loading" :disable="!isFormValid" @click="onSubmit">
         <q-icon name="auto_awesome" size="18px" class="q-mr-sm" />
-        系統智慧推薦
+        系統推薦
         <template #loading>
           <q-spinner-dots color="white" />
         </template>
@@ -524,21 +486,26 @@ const onSubmit = (): void => {
   .form-grid {
     grid-template-columns: 1fr;
   }
+
   .form-body {
     padding: 20px 16px;
   }
+
   .form-header {
     padding: 20px 16px;
   }
+
   .form-footer {
     flex-direction: column;
     gap: 12px;
     align-items: stretch;
     padding: 16px;
   }
+
   .segment-group {
     flex-direction: column;
   }
+
   .health-options {
     flex-direction: column;
   }

@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import { usePremiumPlans }       from '@/composables/PremiumCalculator/usePlans'
-import { usePremiumForm }        from '@/composables/PremiumCalculator/useForm'
+import { usePremiumPlans } from '@/composables/PremiumCalculator/usePlans'
+import { usePremiumForm } from '@/composables/PremiumCalculator/useForm'
 import { usePremiumCalculation } from '@/composables/PremiumCalculator/useCalculation'
-import PremiumCalculatorForm     from '@/components/PremiumCalculator/Form.vue'
-import PremiumCalculatorResult   from '@/components/PremiumCalculator/Result.vue'
+import PremiumCalculatorForm from '@/components/PremiumCalculator/Form.vue'
+import PremiumCalculatorResult from '@/components/PremiumCalculator/Result.vue'
 
 const route = useRoute()
 const { plans, isLoadingPlans, loadPlans } = usePremiumPlans()
@@ -31,7 +31,7 @@ onMounted(async () => {
 
   // 從推薦頁跳轉時，以 query params 覆蓋預設值
   const qPlanId = Number(route.query.planId)
-  const qAge    = Number(route.query.age)
+  const qAge = Number(route.query.age)
   if (qPlanId && plans.value.some((p) => p.id === qPlanId)) planId.value = qPlanId
   if (qAge > 0) age.value = qAge
 })
@@ -42,29 +42,14 @@ onMounted(async () => {
     <div class="page">
       <div class="layout">
 
-        <PremiumCalculatorForm
-          :plans="plans"
-          :is-loading-plans="isLoadingPlans"
-          :plan-id="planId"
-          :age="age"
-          :risk-level="riskLevel"
-          :selected-plan="selectedPlan"
-          :is-loading="isLoading"
-          @update:plan-id="planId = $event"
-          @update:age="age = $event"
-          @update:risk-level="riskLevel = $event"
-          @submit="handleSubmit"
-        />
+        <PremiumCalculatorForm :plans="plans" :is-loading-plans="isLoadingPlans" :plan-id="planId" :age="age"
+          :risk-level="riskLevel" :selected-plan="selectedPlan" :is-loading="isLoading"
+          @update:plan-id="planId = $event" @update:age="age = $event" @update:risk-level="riskLevel = $event"
+          @submit="handleSubmit" />
 
-        <PremiumCalculatorResult
-          :is-loading="isLoading"
-          :result="result"
-          :error-message="errorMessage"
-          :error-code="errorCode"
-          :selected-plan="selectedPlan"
-          :risk-level-label="riskLevelLabel"
-          @dismiss-error="dismissError"
-        />
+        <PremiumCalculatorResult :is-loading="isLoading" :result="result" :error-message="errorMessage"
+          :error-code="errorCode" :selected-plan="selectedPlan" :risk-level-label="riskLevelLabel"
+          @dismiss-error="dismissError" />
 
       </div>
     </div>

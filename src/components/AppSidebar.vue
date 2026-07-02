@@ -9,7 +9,7 @@ const route = useRoute()
     <!-- Logo -->
     <div class="sidebar__brand">
       <div class="brand__mark">保</div>
-      <div class="brand__name">智慧保險平台</div>
+      <div class="brand__name">保險推薦系統</div>
     </div>
 
     <!-- Menu -->
