@@ -19,13 +19,22 @@
       </div>
     </div>
 
-    <!-- Empty State -->
-    <div v-else-if="!results || results.length === 0" class="empty-state">
+    <!-- Empty State: not searched yet -->
+    <div v-else-if="!hasSearched && (!results || results.length === 0)" class="empty-state">
       <div class="empty-icon">
         <q-icon name="policy" size="56px" color="blue-grey-3" />
       </div>
       <div class="empty-title">尚未進行推薦</div>
       <div class="empty-sub">填寫上方條件後，系統將為您精選最適合的保單</div>
+    </div>
+
+    <!-- Empty State: searched but no match -->
+    <div v-else-if="hasSearched && (!results || results.length === 0)" class="empty-state">
+      <div class="empty-icon">
+        <q-icon name="search_off" size="56px" color="blue-grey-3" />
+      </div>
+      <div class="empty-title">當前查詢條件沒有符合的保險方案</div>
+      <div class="empty-sub">建議您調整預算或保障類型後再試一次</div>
     </div>
 
     <!-- Results -->
@@ -43,8 +52,8 @@
           v-for="(plan, index) in results"
           :key="plan.id"
           class="result-card"
-          :class="[`rank-${index + 1}`, { revealed: plan.revealed }]"
-          @animationend="plan.revealed = true"
+          :class="[`rank-${index + 1}`, { revealed: revealedIds.has(plan.id) }]"
+          @animationend="revealedIds.add(plan.id)"
         >
           <!-- Rank Badge -->
           <div class="rank-badge" :class="`badge-${index + 1}`">
@@ -121,7 +130,7 @@
             </div>
           </div>
 
-          <!-- AI Reason + CTA -->
+          <!-- Reason + CTA -->
           <div class="ai-reason">
             <q-icon name="psychology" size="14px" class="ai-icon" />
             <span class="ai-reason__text">{{ plan.aiReason }}</span>
@@ -149,7 +158,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import type { RecommendResultProps, InsuranceType } from '@/types/types'
 
@@ -157,9 +166,15 @@ const props = withDefaults(defineProps<RecommendResultProps>(), {
   results: () => [],
   loading: false,
   criteria: () => ({}),
+  hasSearched: false,
 })
 
 const router = useRouter()
+
+// Tracks which cards have finished their reveal animation, keyed by plan id.
+// Kept as local component state instead of mutating `plan.revealed` on the
+// prop object, since props are one-way (parent -> child) in Vue.
+const revealedIds = reactive(new Set<string>())
 
 function goToCalculator(planId: string) {
   router.push({
@@ -195,7 +210,7 @@ const criteriaText = computed<string>(() => {
   const types = props.criteria?.insuranceTypes
   if (!types) return ''
   const labels = types.map((t) => insuranceTypeMap[t] ?? t).join('、')
-  return `月繳 NT$${props.criteria?.budget?.toLocaleString() ?? ''} · ${labels}`
+  return `年繳 NT$${props.criteria?.budget?.toLocaleString() ?? ''} · ${labels}`
 })
 </script>
 

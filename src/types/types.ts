@@ -140,4 +140,5 @@ export interface RecommendResultProps {
   results?: RecommendedPlan[]
   loading?: boolean
   criteria?: Partial<SearchCriteria>
+  hasSearched?: boolean
 }
