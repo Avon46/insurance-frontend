@@ -16,7 +16,12 @@
         <!-- Right: Results -->
         <div class="result-column">
           <q-scroll-area style="height: 500px; width: 450px">
-            <RecommendResult :results="results" :loading="loading" :criteria="lastCriteria" />
+            <RecommendResult
+              :results="results"
+              :loading="loading"
+              :criteria="lastCriteria"
+              :has-searched="hasSearched"
+            />
           </q-scroll-area>
         </div>
       </div>
@@ -39,6 +44,7 @@ import type { RecommendRequest, RecommendResponse } from '@/types/recommend'
 const loading = ref(false)
 const results = ref<RecommendedPlan[]>([])
 const lastCriteria = ref<Partial<SearchCriteria>>({})
+const hasSearched = ref(false)
 
 function convertUserGroup(segment: string) {
   switch (segment) {
@@ -130,6 +136,7 @@ async function handleSearch(criteria: SearchCriteria) {
     results.value = []
   } finally {
     loading.value = false
+    hasSearched.value = true
   }
 }
 </script>
