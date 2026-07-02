@@ -195,7 +195,7 @@ const criteriaText = computed<string>(() => {
   const types = props.criteria?.insuranceTypes
   if (!types) return ''
   const labels = types.map((t) => insuranceTypeMap[t] ?? t).join('、')
-  return `月繳 NT$${props.criteria?.budget?.toLocaleString() ?? ''} · ${labels}`
+  return `年繳 NT$${props.criteria?.budget?.toLocaleString() ?? ''} · ${labels}`
 })
 </script>
 
